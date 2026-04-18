@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Emplacement logo FAFATRAINING">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9cff4f"/>
+      <stop offset="100%" stop-color="#4de4a7"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="#0f1714" stroke="url(#g)" stroke-width="8"/>
+  <text x="100" y="82" text-anchor="middle" fill="#eef5f1" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700">FAFA</text>
+  <text x="100" y="112" text-anchor="middle" fill="#9cff4f" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">TRAINING</text>
+  <text x="100" y="142" text-anchor="middle" fill="#aab8b1" font-family="Arial, Helvetica, sans-serif" font-size="11">Remplace ce fichier par ton logo</text>
+</svg>

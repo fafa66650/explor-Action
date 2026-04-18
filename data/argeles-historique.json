@@ -1,0 +1,305 @@
+{
+  "village": "Argelès-sur-Mer",
+  "routeId": "argeles-historique",
+  "title": "Argelès historique — Mission des traces catalanes",
+  "subtitle": "Un parcours à pied entre patrimoine, mémoire locale et défis sportifs adaptés.",
+  "duration": "60 à 90 min",
+  "distance": "2,5 à 3,5 km selon variante",
+  "audiences": ["enfants", "ados", "adultes", "familles", "groupes ACM"],
+  "levels": ["decouverte", "explorateur", "expert"],
+  "startPoint": "Place des Castellans — Argelès-Village",
+  "routes": [
+    {
+      "id": "historique",
+      "title": "Parcours historique",
+      "status": "available",
+      "summary": "Le cœur ancien d’Argelès, son patrimoine catalan et la mémoire de la Retirada.",
+      "meta": ["Histoire", "Patrimoine", "À pied", "Défis adaptés"]
+    },
+    {
+      "id": "culture-gourmande",
+      "title": "Parcours culture & terroir",
+      "status": "coming",
+      "summary": "Spécialités locales, marché, traditions et produits du territoire.",
+      "meta": ["Terroir", "Famille", "À venir"]
+    },
+    {
+      "id": "bord-de-mer",
+      "title": "Parcours mer & mémoire",
+      "status": "coming",
+      "summary": "Plage, promenade, mémoire du camp et horizons méditerranéens.",
+      "meta": ["Littoral", "Mémoire", "À venir"]
+    }
+  ],
+  "steps": [
+    {
+      "id": 1,
+      "title": "Casa de l'Albera",
+      "place": "4 place des Castellans, Argelès-Village",
+      "theme": "Patrimoine et identité catalane",
+      "story": "Tu débutes ta mission au cœur du village. Ici, une maison traditionnelle rénovée raconte l'histoire du territoire d'Argelès et du massif des Albères.",
+      "discovery": "La Casa de l'Albera présente l'histoire, la culture, les coutumes catalanes et les savoir-faire locaux du territoire entre Pyrénées et Méditerranée.",
+      "questions": {
+        "decouverte": {
+          "prompt": "Repère le nom du lieu. Quel mot commence par 'Casa' ?",
+          "answers": ["albera", "l'albera", "casa de l'albera"]
+        },
+        "explorateur": {
+          "prompt": "Ce lieu présente surtout l'histoire de quel massif ?",
+          "answers": ["alberes", "albères", "massif des alberes", "massif des albères"]
+        },
+        "expert": {
+          "prompt": "Entre quels deux grands espaces ce territoire est-il situé ?",
+          "answers": ["pyrenees et mediterranee", "pyrénées et méditerranée", "entre pyrenees et mediterranee", "entre pyrénées et méditerranée"]
+        }
+      },
+      "challenges": {
+        "enfant": {
+          "decouverte": "8 squats + 20 secondes d'équilibre sur un pied, puis l'autre.",
+          "explorateur": "12 squats + 6 pas chassés de chaque côté.",
+          "expert": "15 squats + 10 montées de genoux lentes."
+        },
+        "ado": {
+          "decouverte": "12 squats + 20 secondes de gainage debout contre un mur.",
+          "explorateur": "15 squats + 10 fentes alternées.",
+          "expert": "20 squats + 12 fentes alternées + 20 secondes de gainage."
+        },
+        "adulte": {
+          "decouverte": "15 squats contrôlés.",
+          "explorateur": "20 squats + 10 fentes alternées.",
+          "expert": "25 squats + 12 fentes alternées + 25 secondes de gainage."
+        }
+      },
+      "proof": [
+        "Dire à voix haute le nom complet du lieu.",
+        "Faire valider le défi par un animateur, un parent ou un partenaire.",
+        "Option libre : prendre une photo du panneau ou de la façade."
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Église Notre-Dame del Prat",
+      "place": "Centre ancien d'Argelès-sur-Mer",
+      "theme": "Monument historique",
+      "story": "En avançant dans le vieux village, tu rejoins l'église paroissiale d'Argelès. Elle est l'un des repères historiques majeurs du centre ancien.",
+      "discovery": "L'église Notre-Dame del Prat fait partie du patrimoine religieux d'Argelès-sur-Mer et l'édifice est protégé au titre des monuments historiques.",
+      "questions": {
+        "decouverte": {
+          "prompt": "Quel est le premier mot du nom de l'église ?",
+          "answers": ["notre-dame", "notre dame", "notredame"]
+        },
+        "explorateur": {
+          "prompt": "Le nom complet du lieu contient deux mots après 'Notre-Dame'. Quels sont-ils ?",
+          "answers": ["del prat"]
+        },
+        "expert": {
+          "prompt": "Observe l'extérieur : cite un détail architectural ou décoratif que tu remarques vraiment.",
+          "answers": []
+        }
+      },
+      "openValidation": true,
+      "challenges": {
+        "enfant": {
+          "decouverte": "Marcher rapidement 40 secondes autour de la place.",
+          "explorateur": "10 sauts sur place + 10 squats.",
+          "expert": "15 sauts sur place + 12 squats."
+        },
+        "ado": {
+          "decouverte": "15 jumping jacks.",
+          "explorateur": "20 jumping jacks + 10 squats.",
+          "expert": "25 jumping jacks + 15 squats."
+        },
+        "adulte": {
+          "decouverte": "20 jumping jacks.",
+          "explorateur": "25 jumping jacks + 12 squats.",
+          "expert": "30 jumping jacks + 15 squats + 20 secondes de gainage."
+        }
+      },
+      "proof": [
+        "Décrire à quelqu'un un détail vu sur la façade.",
+        "Valider le défi avec une personne du groupe.",
+        "Pour le niveau expert, l'animateur peut demander de montrer le détail observé."
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Le vieux village et ses traces médiévales",
+      "place": "Ruelles du centre ancien",
+      "theme": "Origines d'Argelès",
+      "story": "Le cœur ancien d'Argelès garde la mémoire d'une cité médiévale. L'histoire de la ville est ancienne : sa première mention connue remonte à 879.",
+      "discovery": "La ville d'Argelès-sur-Mer est mentionnée dès 879. Le village ancien conserve une ambiance catalane et un tissu de ruelles héritées du passé.",
+      "questions": {
+        "decouverte": {
+          "prompt": "Retiens bien cette date : quelle année correspond à la première mention connue d'Argelès ?",
+          "answers": ["879"]
+        },
+        "explorateur": {
+          "prompt": "Dans quel type de village te trouves-tu : ancien centre de station balnéaire ou cœur ancien médiéval ?",
+          "answers": ["coeur ancien medieval", "cœur ancien médiéval", "medieval", "médiéval"]
+        },
+        "expert": {
+          "prompt": "À ton avis, pourquoi un centre ancien avec des ruelles serrées est-il utile dans une cité ancienne ?",
+          "answers": []
+        }
+      },
+      "openValidation": true,
+      "challenges": {
+        "enfant": {
+          "decouverte": "8 montées de genoux lentes + 8 talons-fesses.",
+          "explorateur": "10 montées de genoux + 10 talons-fesses.",
+          "expert": "12 montées de genoux + 12 talons-fesses + 15 secondes d'équilibre."
+        },
+        "ado": {
+          "decouverte": "20 secondes de course sur place.",
+          "explorateur": "30 secondes de course sur place.",
+          "expert": "40 secondes de course sur place + 10 squats."
+        },
+        "adulte": {
+          "decouverte": "30 secondes de course sur place.",
+          "explorateur": "40 secondes de course sur place + 10 squats.",
+          "expert": "50 secondes de course sur place + 15 squats."
+        }
+      },
+      "proof": [
+        "Montrer une ruelle ancienne ou un détail de pierre à une autre personne.",
+        "Valider le défi avec l'équipe.",
+        "Les réponses ouvertes sont jugées sur la cohérence, pas sur une formule exacte."
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Pause culture catalane",
+      "place": "Centre ancien — ambiance village",
+      "theme": "Traditions et savoir-faire",
+      "story": "Argelès n'est pas seulement une plage : c'est aussi un village catalan marqué par des traditions, des coutumes et des savoir-faire agricoles.",
+      "discovery": "La Casa de l'Albera évoque les coutumes catalanes, les métiers agricoles, les paysages d'oliveraies et de vignobles, ainsi que la culture locale.",
+      "questions": {
+        "decouverte": {
+          "prompt": "Cite un type de paysage ou de production locale évoqué dans la découverte : oliveraies ou vignobles ?",
+          "answers": ["oliveraies", "vignobles", "oliveraie", "vignoble"]
+        },
+        "explorateur": {
+          "prompt": "Quel mot décrit le mieux l'identité du village : catalane ou alpine ?",
+          "answers": ["catalane"]
+        },
+        "expert": {
+          "prompt": "Donne un exemple de savoir-faire ou de tradition que l'on peut relier à un territoire comme Argelès.",
+          "answers": []
+        }
+      },
+      "openValidation": true,
+      "challenges": {
+        "enfant": {
+          "decouverte": "Jeu imitation : mime un métier ancien pendant 10 secondes.",
+          "explorateur": "Mime un métier ancien + 8 squats.",
+          "expert": "Mime un métier ancien + 10 squats + 10 sauts."
+        },
+        "ado": {
+          "decouverte": "10 squats + mime d'un métier local.",
+          "explorateur": "12 squats + 10 jumping jacks.",
+          "expert": "15 squats + 15 jumping jacks."
+        },
+        "adulte": {
+          "decouverte": "12 squats + 20 secondes de marche rapide.",
+          "explorateur": "15 squats + 12 jumping jacks.",
+          "expert": "20 squats + 15 jumping jacks + 20 secondes de gainage."
+        }
+      },
+      "proof": [
+        "Dire à voix haute le paysage ou la production choisie.",
+        "Le mime ou le défi sportif peut être validé par le groupe.",
+        "Une photo souvenir reste possible mais n'est pas obligatoire."
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Mémorial du camp d'Argelès-sur-Mer",
+      "place": "26 avenue de la Libération",
+      "theme": "Mémoire de la Retirada",
+      "story": "La mission se poursuit vers un lieu de mémoire majeur du territoire. Ici, l'histoire du XXe siècle rencontre la découverte du village d'aujourd'hui.",
+      "discovery": "Le Mémorial du camp d'Argelès-sur-Mer rend hommage aux réfugiés espagnols ayant fui le franquisme à la fin janvier 1939. Un espace muséal retrace leur parcours et la mémoire de la Retirada.",
+      "questions": {
+        "decouverte": {
+          "prompt": "De quel pays venaient les réfugiés évoqués au mémorial ?",
+          "answers": ["espagne", "espagnols", "espagnoles"]
+        },
+        "explorateur": {
+          "prompt": "Quel grand épisode de mémoire est associé à ce lieu ?",
+          "answers": ["retirada", "la retirada"]
+        },
+        "expert": {
+          "prompt": "Pourquoi un village comme Argelès a-t-il intérêt à conserver ce type de lieu de mémoire ?",
+          "answers": []
+        }
+      },
+      "openValidation": true,
+      "challenges": {
+        "enfant": {
+          "decouverte": "Marcher en silence 30 secondes, puis faire 6 respirations lentes.",
+          "explorateur": "Marcher en silence 45 secondes + 6 respirations lentes.",
+          "expert": "Marcher en silence 1 minute + 8 respirations lentes."
+        },
+        "ado": {
+          "decouverte": "40 secondes de marche active puis 20 secondes de respiration calme.",
+          "explorateur": "1 minute de marche active puis 20 secondes de respiration calme.",
+          "expert": "1 minute de marche active + 30 secondes de gainage calme."
+        },
+        "adulte": {
+          "decouverte": "1 minute de marche active puis 20 secondes de respiration calme.",
+          "explorateur": "1 minute de marche active + 10 squats contrôlés.",
+          "expert": "90 secondes de marche active + 12 squats contrôlés + 20 secondes de respiration calme."
+        }
+      },
+      "proof": [
+        "L'animateur peut privilégier un temps de silence respectueux plutôt qu'une photo.",
+        "La validation repose sur la réalisation du défi et la réponse ou la réflexion donnée.",
+        "Pour les niveaux experts, la réponse peut être discutée oralement."
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Final — Front de mer et horizon",
+      "place": "Bord de mer / arrivée libre selon le groupe",
+      "theme": "Entre village, montagne et Méditerranée",
+      "story": "Tu termines le parcours en reliant l'histoire du village à son ouverture sur la mer. Argelès, c'est aussi la rencontre entre la Méditerranée et les premiers contreforts des Pyrénées.",
+      "discovery": "Argelès-sur-Mer est située entre la Méditerranée et les Albères. Le territoire associe patrimoine, littoral et paysages de montagne proches.",
+      "questions": {
+        "decouverte": {
+          "prompt": "Quels sont les deux grands éléments naturels qui encadrent Argelès ?",
+          "answers": ["mer et pyrenees", "mer et pyrénées", "mediterranee et pyrenees", "méditerranée et pyrénées"]
+        },
+        "explorateur": {
+          "prompt": "Le massif proche d'Argelès s'appelle comment ?",
+          "answers": ["alberes", "albères", "massif des alberes", "massif des albères"]
+        },
+        "expert": {
+          "prompt": "Explique en une phrase pourquoi cette situation géographique rend Argelès particulière.",
+          "answers": []
+        }
+      },
+      "openValidation": true,
+      "challenges": {
+        "enfant": {
+          "decouverte": "Mini final : 20 secondes de course légère + 5 squats.",
+          "explorateur": "30 secondes de course légère + 8 squats.",
+          "expert": "40 secondes de course légère + 10 squats."
+        },
+        "ado": {
+          "decouverte": "30 secondes de course légère + 10 squats.",
+          "explorateur": "40 secondes de course légère + 12 squats.",
+          "expert": "50 secondes de course légère + 15 squats."
+        },
+        "adulte": {
+          "decouverte": "40 secondes de course légère + 10 squats.",
+          "explorateur": "50 secondes de course légère + 15 squats.",
+          "expert": "60 secondes de course légère + 20 squats."
+        }
+      },
+      "proof": [
+        "Photo finale d'équipe facultative.",
+        "Validation du défi par le groupe.",
+        "Annonce du badge final : Explorateur des traces catalanes."
+      ]
+    }
+  ]
+}
