@@ -1,116 +1,442 @@
-const APP_KEY = 'exploraction-multi-v1';
-const app = document.getElementById('app');
-
-const state = {
-  catalog: [],
-  route: null,
-  screen: 'home',
-  selectedRouteId: null,
-  config: { mode:'solo', playersCount:'1', teamName:'', playerNamesRaw:'', level:'easy', profile:'ado', timeMode:'challenge' },
-  currentStepIndex: 0,
-  score: 0,
-  startedAt: null,
-  finishedAt: null,
-  gpsVerified: {}, manualVerified: {}, challengeDone: {}, photoDone: {}, selectedAnswers: {}, attemptCounts: {}, proofUrls: {}, summaryBonus: 0, lastMessage: ''
+const VILLAGE_META = {
+  'argeles-sur-mer': { icon: '🏛️', mission: 'Mission des traces catalanes' },
+  'saint-andre': { icon: '⛪', mission: 'Le secret de l’art roman' },
+  'laroque-des-alberes': { icon: '🏰', mission: 'Le village fortifié des Albères' },
+  'villelongue-dels-monts': { icon: '🌿', mission: 'Le village caché des monts' },
+  'collioure': { icon: '🎨', mission: 'Sur les traces des peintres' },
+  'port-vendres': { icon: '⚓', mission: 'Les secrets du port profond' },
+  'banyuls-sur-mer': { icon: '🍇', mission: 'Entre mer, art et vignobles' }
 };
 
-const levelLabels = { easy:'Découverte', medium:'Explorateur', hard:'Expert' };
-const profileLabels = { enfant:'Enfant', ado:'Ado', adulte:'Adulte' };
-const timeModeLabels = { libre:'Libre', challenge:'Challenge' };
+const state = {
+  villageKey: null,
+  config: { mode: 'solo', teamName: 'Explor’Action', players: '1', difficulty: 'discover', timing: 'free' },
+  score: 0,
+  hints: 0,
+  mistakes: 0,
+  challenges: 0,
+  startTs: null,
+  timerId: null,
+  miniTimerId: null,
+  miniTime: 30,
+  missionMap: null,
+  villageMap: null,
+  currentStepIndex: 0,
+  stepState: {},
+  rankingKey: 'exploraction.rankings.v63'
+};
 
-init();
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
 
-async function init(){
-  const saved = readSave();
-  const catalogRes = await fetch('data/catalog.json');
-  const catalogJson = await catalogRes.json();
-  state.catalog = catalogJson.routes;
-  if(saved){ Object.assign(state, saved); state.catalog = catalogJson.routes; }
-  const fallbackId = state.selectedRouteId || state.catalog[0]?.id;
-  if(fallbackId) await loadRouteById(fallbackId, false);
-  render();
-  startTick();
+function formatTime(seconds){
+  const m = Math.floor(seconds/60).toString().padStart(2,'0');
+  const s = Math.floor(seconds%60).toString().padStart(2,'0');
+  return `${m}:${s}`;
+}
+function elapsedSeconds(){
+  if(!state.startTs) return 0;
+  return Math.floor((Date.now() - state.startTs)/1000);
+}
+function renderTemplate(id){
+  const root = $('#screenRoot');
+  root.innerHTML = '';
+  root.appendChild($('#'+id).content.cloneNode(true));
+}
+function getVillageMeta(key){
+  return VILLAGE_META[key] || { icon:'📍', mission:'Mission du village' };
+}
+function setTheme(village){
+  document.documentElement.style.setProperty('--accent', village.accent);
+  document.documentElement.style.setProperty('--accent-soft', `color-mix(in oklab, ${village.accent} 18%, transparent)`);
+  $('#app').style.setProperty('--accent', village.accent);
+  $('#app').dataset.village = state.villageKey || 'home';
+}
+function showTopbar(show, title=''){
+  $('#topbar').classList.toggle('hidden', !show);
+  if(show){
+    $('#tbVillage').textContent = state.villageKey ? window.EXPLOR_DATA[state.villageKey].name : 'Explor’Action';
+    $('#tbTitle').textContent = title || 'Mission';
+    $('#scoreTop').textContent = state.score;
+    $('#helpTokens').textContent = state.hints;
+    $('#chrono').textContent = formatTime(elapsedSeconds());
+  }
+}
+function initHome(){
+  state.villageKey = null;
+  $('#app').dataset.village = 'home';
+  showTopbar(false);
+  renderTemplate('homeTpl');
+  const grid = $('#villageGrid');
+  Object.entries(window.EXPLOR_DATA).forEach(([key, village])=>{
+    const meta = getVillageMeta(key);
+    const card = document.createElement('button');
+    card.className = 'village-card';
+    card.style.setProperty('--accent', village.accent);
+    card.innerHTML = `
+      <div class="vc-top">
+        <div>
+          <div class="eyebrow">${village.tagline}</div>
+          <h3>${village.name}</h3>
+        </div>
+        <div class="vc-icon">${meta.icon}</div>
+      </div>
+      <div class="tag">${meta.mission}</div>
+      <div class="meta">
+        <span class="meta-chip">${village.route.title}</span>
+        <span class="meta-chip">${village.route.duration}</span>
+      </div>`;
+    card.addEventListener('click', ()=>initSetup(key));
+    grid.appendChild(card);
+  });
+  $('[data-action="play"]').onclick = ()=> initSetup(Object.keys(window.EXPLOR_DATA)[0]);
+  $('[data-action="ranking"]').onclick = ()=>showRankingOnly();
+
+  if(window.L){
+    const map = L.map('villageMap',{ zoomControl:false }).setView([42.525, 3.02], 10);
+    state.villageMap = map;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'© OpenStreetMap' }).addTo(map);
+    Object.entries(window.EXPLOR_DATA).forEach(([key, village])=>{
+      const marker = L.circleMarker(village.center,{ radius:8, color:village.accent, fillColor:village.accent, fillOpacity:.95 }).addTo(map)
+        .bindPopup(`<strong>${village.name}</strong><br>${getVillageMeta(key).mission}`);
+      marker.on('click', ()=>initSetup(key));
+    });
+  } else {
+    $('#villageMap').innerHTML = '<div class="muted" style="padding:20px">Carte indisponible hors connexion complète.</div>';
+  }
+}
+function initSetup(villageKey){
+  state.villageKey = villageKey;
+  const village = window.EXPLOR_DATA[villageKey];
+  const meta = getVillageMeta(villageKey);
+  setTheme(village);
+  showTopbar(true, 'Préparer la mission');
+  renderTemplate('setupTpl');
+  $('#setupVillageBadge').textContent = meta.mission;
+  $('#setupVillageTitle').textContent = village.name;
+  $('#setupVillageDesc').textContent = village.hero;
+  $('#setupRouteTitle').textContent = village.route.title;
+  $('#setupRouteDuration').textContent = village.route.duration;
+  $('#setupRouteDistance').textContent = village.route.distance;
+  $('#teamName').value = state.config.teamName || village.name;
+  $('#backBtn').onclick = initHome;
+
+  $$('.choice[data-mode]').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.mode === state.config.mode);
+    btn.onclick = () => {
+      $$('.choice[data-mode]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.config.mode = btn.dataset.mode;
+    };
+  });
+  $$('.choice[data-difficulty]').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.difficulty === state.config.difficulty);
+    btn.onclick = () => {
+      $$('.choice[data-difficulty]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.config.difficulty = btn.dataset.difficulty;
+    };
+  });
+  $$('.choice[data-timing]').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.timing === state.config.timing);
+    btn.onclick = () => {
+      $$('.choice[data-timing]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.config.timing = btn.dataset.timing;
+    };
+  });
+  $('[data-action="startMission"]').onclick = startMission;
+}
+function difficultyLabel(){
+  return ({ discover:'Découverte', explorer:'Explorateur', expert:'Expert' })[state.config.difficulty];
+}
+function challengeVariant(text){
+  const d = state.config.difficulty;
+  const parts = text.split('•').map(x=>x.trim());
+  if(d === 'discover') return (parts[0] || text).replace('Découverte :','').trim();
+  if(d === 'explorer') return (parts[1] || parts[0] || text).replace('Explorateur :','').trim();
+  return (parts[2] || parts[1] || text).replace('Expert :','').trim();
+}
+function startMission(){
+  state.config.teamName = ($('#teamName').value || (state.config.mode === 'team' ? 'Équipe sans nom' : 'Solo')).trim();
+  state.config.players = $('#playerCount').value;
+  state.score = 0; state.hints = 0; state.mistakes = 0; state.challenges = 0;
+  state.currentStepIndex = 0; state.stepState = {}; state.startTs = Date.now();
+  if(state.timerId) clearInterval(state.timerId);
+  state.timerId = setInterval(()=>{ if($('#chrono')) $('#chrono').textContent = formatTime(elapsedSeconds()); },1000);
+  showTopbar(true, 'Mission en cours');
+  renderMission();
+}
+function getVillage(){ return window.EXPLOR_DATA[state.villageKey]; }
+function getStep(){ return getVillage().steps[state.currentStepIndex]; }
+function currentState(){
+  const key = getStep().id;
+  if(!state.stepState[key]){
+    state.stepState[key] = {
+      questionAttempts: 0, fieldAttempts: 0, questionSolved: false, fieldSolved: false,
+      challengeDone: false, hintUsed: false, fieldHintUsed: false, miniTimerFinished: false
+    };
+  }
+  return state.stepState[key];
+}
+function scoreDisplayUpdate(){
+  $('#scoreTop').textContent = state.score;
+  $('#helpTokens').textContent = state.hints;
+  $('#challengeCount') && ($('#challengeCount').textContent = state.challenges);
+  $('#mistakeCount') && ($('#mistakeCount').textContent = state.mistakes);
+}
+function renderMission(){
+  const village = getVillage();
+  const meta = getVillageMeta(state.villageKey);
+  setTheme(village);
+  renderTemplate('missionTpl');
+  showTopbar(true, village.route.title);
+  $('#backBtn').onclick = ()=>initSetup(state.villageKey);
+  $('#tbVillage').textContent = village.name;
+  $('#tbTitle').textContent = village.route.title;
+  $('#teamDisplay').textContent = state.config.teamName;
+  $('#routeTitle').textContent = `${meta.icon} ${village.tagline} · ${difficultyLabel()}`;
+  $('#routeHero').textContent = meta.mission;
+  $('#villageCover').style.setProperty('--accent', village.accent);
+  const list = $('#stepList');
+  village.steps.forEach((step, i)=>{
+    const item = document.createElement('div');
+    item.className = `step-pill ${i === state.currentStepIndex ? 'active':''} ${i < state.currentStepIndex ? 'done':''}`;
+    item.innerHTML = `<span>${i+1}. ${step.place}</span><strong>${i < state.currentStepIndex ? '✓' : i === state.currentStepIndex ? '⏳' : '🔒'}</strong>`;
+    list.appendChild(item);
+  });
+  if(window.L){
+    const map = L.map('missionMap',{ zoomControl:false }).setView(village.center, 14);
+    state.missionMap = map;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'© OpenStreetMap' }).addTo(map);
+    L.circleMarker(village.center,{ radius:10, color:village.accent, fillColor:village.accent, fillOpacity:.95 }).addTo(map)
+      .bindPopup(`<strong>${village.name}</strong><br>${meta.mission}`).openPopup();
+  } else {
+    $('#missionMap').innerHTML = '<div class="muted" style="padding:20px">Carte indisponible.</div>';
+  }
+  renderStep();
+  scoreDisplayUpdate();
+}
+function renderOptions(container, options, onClick){
+  container.innerHTML = '';
+  options.forEach((opt, idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = ()=>onClick(idx, btn);
+    container.appendChild(btn);
+  });
+}
+function updateProgress(){
+  const total = getVillage().steps.length;
+  const percent = Math.round(((state.currentStepIndex+1)/total)*100);
+  $('#stepProgressMini').textContent = `Étape ${state.currentStepIndex+1}/${total}`;
+  $('#progressPercent').textContent = `${percent}%`;
+  $('#progressFill').style.width = `${percent}%`;
+}
+function maybeEnableNext(){
+  const st = currentState();
+  const ok = st.questionSolved && st.fieldSolved && st.challengeDone;
+  $('#nextBtn').disabled = !ok;
+  if(ok){
+    $('#cultureCard').classList.remove('hidden');
+    $('#cultureText').textContent = `${getStep().question.explanation} ${getStep().field.explanation}`;
+    $('#nextBtn').textContent = state.currentStepIndex === getVillage().steps.length - 1 ? 'Terminer la mission' : 'Étape suivante';
+  }
+}
+function applyPenalty(kind='hint'){
+  if(kind==='hint'){ state.score = Math.max(0, state.score - 10); }
+  if(kind==='reveal'){ state.score = Math.max(0, state.score - 20); }
+  scoreDisplayUpdate();
+}
+function reduceOptions(container, correctIndex){
+  const buttons = $$('.option-btn', container);
+  let removed = 0;
+  buttons.forEach((btn, idx)=>{
+    if(idx !== correctIndex && removed < 1){ btn.disabled = true; btn.style.opacity = '.35'; removed++; }
+  });
+}
+function handleQuestion(optionIndex, btn){
+  const step = getStep();
+  const st = currentState();
+  if(st.questionSolved) return;
+  const correct = optionIndex === step.question.answer;
+  st.questionAttempts++;
+  if(correct){
+    st.questionSolved = true;
+    state.score += Math.max(10, 20 - (st.questionAttempts-1)*5);
+    $('#questionFeedback').textContent = '✅ Bonne réponse. La culture du lieu se débloque.';
+    $('#questionFeedback').className = 'feedback good';
+    $$('.option-btn', $('#questionOptions')).forEach((b,i)=>{ b.disabled = true; if(i===optionIndex) b.classList.add('correct'); });
+    maybeEnableNext();
+  } else {
+    btn.classList.add('wrong'); btn.disabled = true; state.mistakes++; state.score = Math.max(0, state.score - 5);
+    $('#questionFeedback').textContent = st.questionAttempts >= 2 ? '❌ Toujours faux. Une aide est maintenant disponible.' : '❌ Faux. Essaie encore une fois.';
+    $('#questionFeedback').className = 'feedback bad';
+    if(st.questionAttempts >= 2) $('#hintBtn').disabled = false;
+  }
+  scoreDisplayUpdate();
+}
+function handleField(optionIndex, btn){
+  const step = getStep();
+  const st = currentState();
+  if(st.fieldSolved) return;
+  const correct = optionIndex === step.field.answer;
+  st.fieldAttempts++;
+  if(correct){
+    st.fieldSolved = true;
+    state.score += Math.max(10, 20 - (st.fieldAttempts-1)*5);
+    $('#fieldFeedback').textContent = '✅ Validation terrain correcte.';
+    $('#fieldFeedback').className = 'feedback good';
+    $$('.option-btn', $('#fieldOptions')).forEach((b,i)=>{ b.disabled = true; if(i===optionIndex) b.classList.add('correct'); });
+    maybeEnableNext();
+  } else {
+    btn.classList.add('wrong'); btn.disabled = true; state.mistakes++; state.score = Math.max(0, state.score - 5);
+    $('#fieldFeedback').textContent = st.fieldAttempts >= 2 ? '❌ Faux. L’indice terrain est maintenant disponible.' : '❌ Faux. Regarde encore autour de toi.';
+    $('#fieldFeedback').className = 'feedback bad';
+    if(st.fieldAttempts >= 2) $('#fieldHintBtn').disabled = false;
+  }
+  scoreDisplayUpdate();
+}
+function renderStep(){
+  const step = getStep();
+  const st = currentState();
+  $('#stepProgress').textContent = `Étape ${state.currentStepIndex+1}/${getVillage().steps.length}`;
+  $('#stepPlace').textContent = step.place;
+  $('#stepRepere').textContent = `Repère : ${step.repere}`;
+  $('#stepStory').textContent = step.story;
+  $('#questionPrompt').textContent = step.question.prompt;
+  $('#fieldPrompt').textContent = step.field.prompt;
+  $('#challengeTitle').textContent = step.challenge.title;
+  $('#challengeInstruction').textContent = challengeVariant(step.challenge.instruction);
+  $('#challengeReward').textContent = step.challenge.reward;
+  $('#bonusLabel').textContent = st.challengeDone ? 'Défi validé' : 'Bonus dispo : défi utile';
+  $('#nextReward').textContent = st.questionSolved && st.fieldSolved ? 'Objectif : finaliser le défi' : 'Objectif : résoudre les deux validations';
+  $('#cultureCard').classList.toggle('hidden', !(st.questionSolved && st.fieldSolved));
+  $('#cultureText').textContent = st.questionSolved && st.fieldSolved ? `${step.question.explanation} ${step.field.explanation}` : '';
+  renderOptions($('#questionOptions'), step.question.options, handleQuestion);
+  renderOptions($('#fieldOptions'), step.field.options, handleField);
+  $('#questionFeedback').textContent = '';
+  $('#fieldFeedback').textContent = '';
+  $('#challengeFeedback').textContent = st.challengeDone ? '✅ Défi déjà validé.' : '';
+  $('#challengeFeedback').className = 'feedback' + (st.challengeDone ? ' good' : '');
+  $('#miniChrono').textContent = formatTime(state.miniTime);
+  $('#hintBtn').disabled = st.questionAttempts < 2 || st.hintUsed || st.questionSolved;
+  $('#hintPenalty').textContent = 'Utiliser l’aide coûte -10 points.';
+  $('#fieldHintBtn').disabled = st.fieldAttempts < 2 || st.fieldHintUsed || st.fieldSolved;
+  $('#fieldHintPenalty').textContent = 'Indice terrain : -10 points.';
+  $('#hintBox').classList.toggle('hidden', !st.hintUsed);
+  $('#fieldHintBox').classList.toggle('hidden', !st.fieldHintUsed);
+  $('#hintBtn').onclick = ()=>{
+    if(st.hintUsed || st.questionSolved) return;
+    st.hintUsed = true; applyPenalty('hint');
+    $('#hintBox').classList.remove('hidden'); $('#hintBox').textContent = step.question.hint;
+    reduceOptions($('#questionOptions'), step.question.answer); $('#hintBtn').disabled = true; scoreDisplayUpdate();
+  };
+  $('#fieldHintBtn').onclick = ()=>{
+    if(st.fieldHintUsed || st.fieldSolved) return;
+    st.fieldHintUsed = true; applyPenalty('hint');
+    $('#fieldHintBox').classList.remove('hidden'); $('#fieldHintBox').textContent = step.field.hint;
+    reduceOptions($('#fieldOptions'), step.field.answer); $('#fieldHintBtn').disabled = true; scoreDisplayUpdate();
+  };
+  $('#miniTimerBtn').onclick = startMiniTimer;
+  $('#challengeDoneBtn').onclick = ()=>{
+    if(st.challengeDone) return;
+    st.challengeDone = true; state.challenges++; state.score += 15;
+    if(st.miniTimerFinished === false && state.config.timing === 'challenge') state.score += 10;
+    if(step.challenge.type !== 'physique') state.hints += 1;
+    $('#challengeFeedback').textContent = '✅ Défi validé. Bonus ajouté.';
+    $('#challengeFeedback').className = 'feedback good';
+    scoreDisplayUpdate(); maybeEnableNext();
+  };
+  $('#nextBtn').onclick = nextStep;
+  updateProgress(); maybeEnableNext(); scoreDisplayUpdate();
+}
+function startMiniTimer(){
+  if(state.miniTimerId) return;
+  const base = state.config.difficulty === 'discover' ? 30 : state.config.difficulty === 'explorer' ? 40 : 50;
+  state.miniTime = base;
+  $('#miniChrono').textContent = formatTime(state.miniTime);
+  const st = currentState(); st.miniTimerFinished = false;
+  state.miniTimerId = setInterval(()=>{
+    state.miniTime--; $('#miniChrono').textContent = formatTime(state.miniTime);
+    if(state.miniTime <= 0){
+      clearInterval(state.miniTimerId); state.miniTimerId = null; st.miniTimerFinished = true;
+      $('#challengeFeedback').textContent = '⏱️ Mini-chrono écoulé. Tu peux encore valider le défi, sans bonus temps.';
+      $('#challengeFeedback').className = 'feedback bad';
+    }
+  },1000);
+}
+function nextStep(){
+  state.currentStepIndex++;
+  if(state.currentStepIndex >= getVillage().steps.length){ finishMission(); }
+  else {
+    if(state.miniTimerId){ clearInterval(state.miniTimerId); state.miniTimerId = null; }
+    renderMission();
+  }
+}
+function computeBadges(){
+  const badges = [];
+  if(state.score >= 140) badges.push('🏅 Maître du village');
+  if(state.mistakes <= 2) badges.push('🎯 Sans faute ou presque');
+  if(state.challenges === getVillage().steps.length) badges.push('💪 Tous les défis validés');
+  if(Object.values(state.stepState).filter(s=>s.hintUsed || s.fieldHintUsed).length <= 1) badges.push('🧠 Fin stratège');
+  if(state.config.mode === 'team') badges.push('🤝 Équipe soudée');
+  if(!badges.length) badges.push('🌍 Explorateur');
+  return badges;
+}
+function saveRanking(record){
+  const store = JSON.parse(localStorage.getItem(state.rankingKey) || '[]');
+  store.push(record);
+  store.sort((a,b)=> b.score - a.score || a.time - b.time);
+  localStorage.setItem(state.rankingKey, JSON.stringify(store.slice(0,30)));
+}
+function finishMission(){
+  if(state.timerId){ clearInterval(state.timerId); state.timerId = null; }
+  if(state.miniTimerId){ clearInterval(state.miniTimerId); state.miniTimerId = null; }
+  const totalTime = elapsedSeconds();
+  if(state.config.timing === 'challenge'){
+    if(totalTime < 1800) state.score += 30;
+    else if(totalTime < 2700) state.score += 15;
+  }
+  const badges = computeBadges();
+  const record = { village: getVillage().name, team: state.config.teamName, score: state.score, time: totalTime, when: new Date().toISOString() };
+  saveRanking(record);
+  renderTemplate('endTpl');
+  showTopbar(false);
+  $('#endVillage').textContent = `${getVillage().name} · ${getVillageMeta(state.villageKey).mission}`;
+  $('#endTagline').textContent = 'Tu as bougé, appris, gagné des bonus et terminé l’aventure.';
+  $('#endScore').textContent = state.score;
+  $('#endTime').textContent = formatTime(totalTime);
+  $('#endChallenges').textContent = state.challenges;
+  $('#endHints').textContent = Object.values(state.stepState).filter(s=>s.hintUsed || s.fieldHintUsed).length;
+  const badgeRow = $('#badgeRow');
+  badges.forEach(b=>{ const el = document.createElement('div'); el.className = 'badge'; el.textContent = b; badgeRow.appendChild(el); });
+  $('[data-action="restartVillage"]').onclick = ()=>initSetup(state.villageKey);
+  $('[data-action="home"]').onclick = initHome;
+  renderRanking($('#rankingList'));
+}
+function renderRanking(container){
+  const store = JSON.parse(localStorage.getItem(state.rankingKey) || '[]');
+  container.innerHTML = '';
+  if(!store.length){ container.innerHTML = '<p class="muted">Aucun score enregistré pour le moment.</p>'; return; }
+  store.slice(0,10).forEach((row, idx)=>{
+    const item = document.createElement('div');
+    item.className = 'rank-item';
+    item.innerHTML = `<div><strong>#${idx+1} ${row.team}</strong><div class="muted">${row.village}</div></div><div><strong>${row.score} pts</strong><div class="muted">${formatTime(row.time)}</div></div>`;
+    container.appendChild(item);
+  });
+}
+function showRankingOnly(){
+  renderTemplate('endTpl');
+  showTopbar(true, 'Classements');
+  $('#backBtn').onclick = initHome;
+  $('#endVillage').textContent = 'Explor’Action';
+  $('#endTagline').textContent = 'Classements enregistrés sur cet appareil.';
+  $('#endScore').textContent = '—'; $('#endTime').textContent = '—'; $('#endChallenges').textContent = '—'; $('#endHints').textContent = '—';
+  $('[data-action="restartVillage"]').classList.add('hidden');
+  $('[data-action="home"]').onclick = initHome;
+  renderRanking($('#rankingList'));
 }
 
-function readSave(){ try{ return JSON.parse(localStorage.getItem(APP_KEY)||'null'); } catch{ return null; } }
-function save(){
-  const safe = JSON.parse(JSON.stringify(state));
-  delete safe.catalog; delete safe.route;
-  localStorage.setItem(APP_KEY, JSON.stringify(safe));
-}
-
-async function loadRouteById(id, reset=true){
-  const item = state.catalog.find(r=>r.id===id); if(!item) return;
-  const res = await fetch('data/'+item.file); state.route = await res.json(); state.selectedRouteId = id;
-  if(reset){ resetMissionState(true); state.screen='config'; }
-  save();
-}
-
-function resetMissionState(keepConfig=true){
-  const cfg = keepConfig ? {...state.config} : { mode:'solo', playersCount:'1', teamName:'', playerNamesRaw:'', level:'easy', profile:'ado', timeMode:'challenge' };
-  state.config = cfg; state.currentStepIndex=0; state.score=0; state.startedAt=null; state.finishedAt=null; state.gpsVerified={}; state.manualVerified={}; state.challengeDone={}; state.photoDone={}; state.selectedAnswers={}; state.attemptCounts={}; state.proofUrls={}; state.summaryBonus=0; state.lastMessage='';
-}
-
-function formatMinutesWindow(profile, level){
-  const playersAdj = normalizePlayersCount(state.config.playersCount)>=4?10:normalizePlayersCount(state.config.playersCount)>1?5:0;
-  const [min,max] = state.route.timing[profile][level]; return [min+playersAdj,max+playersAdj];
-}
-function normalizePlayersCount(v){ return v==='4+'?4:parseInt(v||1,10); }
-function getPlayersList(){ const count=normalizePlayersCount(state.config.playersCount); const raw=(state.config.playerNamesRaw||'').split(',').map(s=>s.trim()).filter(Boolean); return Array.from({length:count},(_,i)=>raw[i]||`Joueur ${i+1}`); }
-function currentActor(){ const names=getPlayersList(); return state.config.mode==='team'?(names[state.currentStepIndex % names.length] || state.config.teamName || 'Équipe'):'Joueur'; }
-function elapsedMs(){ if(!state.startedAt) return 0; return Math.max(0, (state.finishedAt||Date.now())-state.startedAt); }
-function formatDuration(ms){ const t=Math.floor(ms/1000),m=Math.floor(t/60).toString().padStart(2,'0'),s=(t%60).toString().padStart(2,'0'); return `${m}:${s}`; }
-function mapsLink(lat,lng){ return `https://www.google.com/maps?q=${lat},${lng}`; }
-function escapeHtml(s=''){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
-function render(){
-  if(!state.route){ app.innerHTML='<div class="card">Chargement…</div>'; return; }
-  app.innerHTML = `${renderTopbar()}${renderHome()}${renderConfig()}${renderGame()}${renderFinish()}`;
-  bindConfig(); bindGame(); syncVisibleScreen();
-}
-function syncVisibleScreen(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(`screen-${state.screen}`)?.classList.add('active'); }
-
-function renderTopbar(){
-  const gameLike = ['game','finish'].includes(state.screen);
-  const [targetMin,targetMax] = formatMinutesWindow(state.config.profile, state.config.level);
-  const elapsed=elapsedMs(), remain=Math.max(0,targetMax*60000-elapsed);
-  return `<div class="topbar"><div class="brand"><img src="assets/logo.jpg" alt="logo"><div><div class="brand-title">Explor’Action</div><div class="brand-sub">${state.route.village} • ${state.route.title}</div></div></div><div class="pills">${gameLike?`<span class="pill" id="pill-step">Étape ${Math.min(state.currentStepIndex+1,state.route.steps.length)}/${state.route.steps.length}</span><span class="pill score" id="pill-score">Score ${state.score}</span><span class="pill timer" id="pill-elapsed">⏱ ${formatDuration(elapsed)}</span><span class="pill timer" id="pill-remaining">${state.config.timeMode==='challenge'?'⌛ '+formatDuration(remain):targetMin+'-'+targetMax+' min'}</span>`:`<span class="pill">${state.catalog.length} villages</span><span class="pill">GitHub only</span>`}</div></div>`;
-}
-
-function renderHome(){
-  const [targetMin,targetMax] = formatMinutesWindow(state.config.profile, state.config.level);
-  const cards = state.catalog.map(item=>`<button class="route-card" onclick="pickRoute('${item.id}')"><span class="badge">${item.village}</span><h3>${item.title}</h3><small>${item.subtitle}</small><div class="tagrow"><span class="tag">${item.steps} étapes</span><span class="tag">${item.distance}</span></div></button>`).join('');
-  return `<section id="screen-home" class="screen ${state.screen==='home'?'active':''}"><div class="card hero"><div class="brand"><img src="assets/logo.jpg" alt="logo"><div><h1>Explore autrement</h1><p>Choisis un village, joue étape par étape, gagne des points, des bonus temps et des preuves d’équipe.</p></div></div><div class="buttons" style="margin-top:16px"><button class="btn-primary" onclick="state.screen='config';render()">Jouer ${state.route.village}</button><button class="btn-secondary" onclick="document.getElementById('villages').scrollIntoView({behavior:'smooth'})">Choisir un village</button>${state.startedAt && !state.finishedAt?`<button class="btn-secondary" onclick="state.screen='game';render()">Reprendre</button>`:''}</div><div class="kpis"><div class="kpi"><small class="muted">Parcours actif</small><b>${state.route.village}</b></div><div class="kpi"><small class="muted">Durée type</small><b>${targetMin}-${targetMax} min</b></div><div class="kpi"><small class="muted">Style</small><b>GPS + repères + défis</b></div></div></div><div id="villages" class="grid grid-3" style="margin-top:16px">${cards}</div></section>`;
-}
-
-function renderConfig(){
-  const [targetMin,targetMax] = formatMinutesWindow(state.config.profile,state.config.level);
-  return `<section id="screen-config" class="screen ${state.screen==='config'?'active':''}"><div class="card"><div class="buttons"><button class="btn-ghost" onclick="state.screen='home';render()">← Accueil</button></div><h2 style="margin:.5rem 0 0">Préparer la mission</h2><p class="muted">${state.route.village} • ${state.route.title}</p><div class="grid grid-2" style="margin-top:16px"><div class="field"><label>Mode</label><select id="mode"><option value="solo" ${state.config.mode==='solo'?'selected':''}>Solo</option><option value="team" ${state.config.mode==='team'?'selected':''}>Équipe</option></select></div><div class="field"><label>Nombre de joueurs</label><select id="playersCount">${['1','2','3','4+'].map(v=>`<option value="${v}" ${String(state.config.playersCount)===v?'selected':''}>${v}</option>`).join('')}</select></div><div class="field"><label>Nom d’équipe</label><input id="teamName" type="text" value="${escapeHtml(state.config.teamName)}" placeholder="Ex. Les Catalans rapides"></div><div class="field"><label>Prénoms (séparés par des virgules)</label><input id="playerNamesRaw" type="text" value="${escapeHtml(state.config.playerNamesRaw)}" placeholder="Lina, Hugo, Sami"></div><div class="field"><label>Niveau</label><select id="level"><option value="easy" ${state.config.level==='easy'?'selected':''}>Découverte</option><option value="medium" ${state.config.level==='medium'?'selected':''}>Explorateur</option><option value="hard" ${state.config.level==='hard'?'selected':''}>Expert</option></select></div><div class="field"><label>Profil</label><select id="profile"><option value="enfant" ${state.config.profile==='enfant'?'selected':''}>Enfant</option><option value="ado" ${state.config.profile==='ado'?'selected':''}>Ado</option><option value="adulte" ${state.config.profile==='adulte'?'selected':''}>Adulte</option></select></div><div class="field"><label>Mode temps</label><select id="timeMode"><option value="challenge" ${state.config.timeMode==='challenge'?'selected':''}>Challenge</option><option value="libre" ${state.config.timeMode==='libre'?'selected':''}>Libre</option></select></div></div><div class="card compact" style="margin-top:16px"><div class="section-title">Résumé direct</div><div class="tagrow"><span class="tag">${state.route.steps.length} étapes</span><span class="tag">${state.route.distanceKm}</span><span class="tag">${targetMin}-${targetMax} min</span><span class="tag">Bonnes réponses + défis + bonus temps</span></div><p class="helper">Bonne réponse : +20 • premier coup : +10 • GPS : +10 • défi : +15 • photo : +10 • équipe : +5 • temps : bonus final.</p></div><div class="buttons" style="margin-top:16px"><button class="btn-primary" onclick="startMission()">Commencer la mission</button></div></div></section>`;
-}
-
-function renderQuestion(step,q,selected){
-  if(q.type==='mcq') return `<div class="option-list">${q.options.map(opt=>`<label class="option"><input type="radio" name="ans-${step.id}" value="${escapeHtml(opt)}" ${selected.toLowerCase()===opt.toLowerCase()?'checked':''}><span>${opt}</span></label>`).join('')}</div>`;
-  return `<input id="answer-text" type="text" value="${escapeHtml(selected)}" placeholder="Ta réponse">`;
-}
-
-function renderGame(){ const step=state.route.steps[state.currentStepIndex]; if(!step) return `<section id="screen-game" class="screen"></section>`; const q=step.question[state.config.level], challenge=step.challenge[state.config.profile][state.config.level], selected=state.selectedAnswers[step.id]||''; const gpsOk=!!state.gpsVerified[step.id], manualOk=!!state.manualVerified[step.id], challengeOk=!!state.challengeDone[step.id], photoOk=!!state.photoDone[step.id]; return `<section id="screen-game" class="screen ${state.screen==='game'?'active':''}"><div class="card"><div class="buttons"><button class="btn-ghost" onclick="state.screen='home';render()">← Accueil</button></div><div class="step-header" style="margin-top:8px"><div><div class="pills"><span class="badge">${state.route.village}</span><span class="pill">${state.route.title}</span><span class="pill">Au tour de : ${currentActor()}</span></div><div class="step-title">${step.title}</div><div class="muted">${step.address}</div></div><div class="pills"><span class="pill score">Score ${state.score}</span></div></div><div class="stepbar"><span style="width:${(state.currentStepIndex/state.route.steps.length)*100}%"></span></div><div class="two-col"><div class="grid"><div class="card compact"><div class="section-title">📍 Repère visuel</div><p>${step.visualHint}</p><div class="helper">Repère d’approche : ${step.arrivalHint}</div><div class="buttons" style="margin-top:10px"><a class="btn-secondary" href="${mapsLink(step.coords.lat,step.coords.lng)}" target="_blank" rel="noopener">Ouvrir Maps</a><button class="btn-secondary" onclick="checkPosition()">Vérifier ma position</button><button class="btn-secondary" onclick="toggleManualValidation()">${manualOk?'Validation équipe OK':'Valider avec l’équipe'}</button></div><div class="feedback ${gpsOk||manualOk?'ok':''}">${gpsOk?'✅ Position vérifiée':manualOk?'👥 Validation équipe activée':'GPS non vérifié pour le moment'}</div></div><div class="card compact"><div class="section-title">🏛️ À découvrir</div><p>${step.discovery}</p></div><div class="card compact"><div class="section-title">🧠 Énigme</div><p><b>${q.prompt}</b></p>${renderQuestion(step,q,selected)}<div class="helper">Si tu te trompes, l’app te le dira et enlèvera 5 points.</div></div></div><div class="grid"><div class="card compact"><div class="section-title">🎯 Défi</div><p>${challenge}</p><div class="helper">${step.challenge.purpose}</div><label class="checkline"><input type="checkbox" id="challenge-check" ${challengeOk?'checked':''}> Défi réalisé</label></div><div class="card compact"><div class="section-title">📸 Preuve</div><p>${step.proof.type==='photo'?step.proof.label:step.proof.type==='team'?step.proof.label:'Photo optionnelle : utile pour vos souvenirs, non obligatoire ici.'}</p>${step.proof.type==='photo'?`<input type="file" id="photo-input" accept="image/*" capture="environment"><img id="photo-preview" class="photo-preview ${photoOk?'show':''}" src="${escapeHtml(state.proofUrls[step.id]||'')}" alt="photo">`:`<div class="helper">Tu peux garder l’étape simple si aucune photo n’est demandée.</div>`}</div><div class="card compact"><div class="section-title">🏁 Valider</div><div id="feedback-box" class="feedback"></div><div class="sticky"><button class="btn-primary" style="width:100%" onclick="validateStep()">Valider l’étape</button></div></div></div></div></div></section>`; }
-
-function renderFinish(){ if(state.screen!=='finish') return `<section id="screen-finish" class="screen"></section>`; const [targetMin,targetMax]=formatMinutesWindow(state.config.profile,state.config.level); const elapsed=elapsedMs(); let timeBonus=0; if(state.config.timeMode==='challenge'){ if(elapsed <= targetMin*60000) timeBonus=state.route.scoreRules.timeBonusFast; else if(elapsed <= targetMax*60000) timeBonus=state.route.scoreRules.timeBonusMid; } const final=state.score + timeBonus; return `<section id="screen-finish" class="screen active"><div class="card hero"><h1>Mission terminée</h1><p>${state.route.village} • ${state.route.title}</p><div class="kpis"><div class="kpi"><small class="muted">Temps total</small><b>${formatDuration(elapsed)}</b></div><div class="kpi"><small class="muted">Bonus temps</small><b>+${timeBonus}</b></div><div class="kpi"><small class="muted">Score final</small><b>${final}</b></div></div><div class="tagrow" style="margin-top:14px"><span class="tag">${state.route.steps.length} étapes validées</span><span class="tag">${state.config.mode==='team'?'Équipe':'Solo'}</span><span class="tag">${levelLabels[state.config.level]}</span><span class="tag">${profileLabels[state.config.profile]}</span></div><div class="buttons" style="margin-top:16px"><button class="btn-primary" onclick="restartSameRoute()">Rejouer ce parcours</button><button class="btn-secondary" onclick="goHomeReset()">Choisir un autre village</button></div></div></section>`; }
-
-function bindConfig(){ ['mode','playersCount','teamName','playerNamesRaw','level','profile','timeMode'].forEach(id=>{ const el=document.getElementById(id); if(!el) return; el.onchange=()=>{ state.config[id]=el.value; save(); render(); }; if(el.tagName==='INPUT') el.oninput=()=>{ state.config[id]=el.value; save(); }; }); }
-function bindGame(){ const step=state.route.steps[state.currentStepIndex]; if(!step) return; document.querySelectorAll(`input[name='ans-${step.id}']`).forEach(el=>el.onchange=()=>{ state.selectedAnswers[step.id]=el.value; save(); }); const txt=document.getElementById('answer-text'); if(txt) txt.oninput=()=>{ state.selectedAnswers[step.id]=txt.value; save(); }; const ch=document.getElementById('challenge-check'); if(ch) ch.onchange=()=>{ state.challengeDone[step.id]=ch.checked; save(); }; const photo=document.getElementById('photo-input'); if(photo) photo.onchange=e=>{ const file=e.target.files?.[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{ state.proofUrls[step.id]=reader.result; state.photoDone[step.id]=true; save(); render(); }; reader.readAsDataURL(file); }; }
-
-async function pickRoute(id){ await loadRouteById(id,true); render(); }
-function startMission(){ state.startedAt=Date.now(); state.finishedAt=null; state.currentStepIndex=0; state.score=0; state.gpsVerified={}; state.manualVerified={}; state.challengeDone={}; state.photoDone={}; state.selectedAnswers={}; state.attemptCounts={}; state.proofUrls={}; state.summaryBonus=0; state.lastMessage=''; state.screen='game'; save(); render(); }
-function restartSameRoute(){ resetMissionState(true); state.screen='config'; save(); render(); }
-function goHomeReset(){ resetMissionState(true); state.screen='home'; save(); render(); }
-function answerFor(step){ return (state.selectedAnswers[step.id]||'').trim().toLowerCase(); }
-function validateAnswer(step){ const q=step.question[state.config.level]; const ans=answerFor(step); if(!ans) return {ok:false,msg:'Choisis ou entre une réponse.'}; const accepted=(q.answers||[]).map(v=>String(v).trim().toLowerCase()); return accepted.includes(ans) ? {ok:true,msg:'Bonne réponse.'} : {ok:false,msg:'Mauvaise réponse, essaie encore.'}; }
-function validateStep(){ const step=state.route.steps[state.currentStepIndex]; const qres=validateAnswer(step); const box=document.getElementById('feedback-box'); if(!qres.ok){ state.score=Math.max(0,state.score-5); state.attemptCounts[step.id]=(state.attemptCounts[step.id]||0)+1; save(); if(box){ box.className='feedback ko'; box.textContent='❌ '+qres.msg+' (-5 pts)'; } renderTopbarTick(); return; }
- if(!(state.gpsVerified[step.id]||state.manualVerified[step.id])){ if(box){ box.className='feedback ko'; box.textContent='⚠️ Vérifie ta position ou valide avec l’équipe.'; } return; }
- let pts=state.route.scoreRules.answer; if((state.attemptCounts[step.id]||0)===0) pts += state.route.scoreRules.firstTryBonus; if(state.gpsVerified[step.id]) pts += state.route.scoreRules.gpsBonus; if(state.challengeDone[step.id]) pts += state.route.scoreRules.challengeBonus; if(step.proof.type==='photo' && state.photoDone[step.id]) pts += state.route.scoreRules.photoBonus; if(state.config.mode==='team') pts += state.route.scoreRules.teamBonus; state.score += pts; state.currentStepIndex += 1; state.lastMessage = `+${pts} points`; if(state.currentStepIndex >= state.route.steps.length){ state.finishedAt=Date.now(); state.screen='finish'; } save(); render(); }
-function toggleManualValidation(){ const step=state.route.steps[state.currentStepIndex]; state.manualVerified[step.id]=!state.manualVerified[step.id]; save(); render(); }
-function checkPosition(){ const step=state.route.steps[state.currentStepIndex]; const box=document.getElementById('feedback-box'); if(!navigator.geolocation){ if(box){ box.className='feedback ko'; box.textContent='La géolocalisation n’est pas disponible.'; } return; } navigator.geolocation.getCurrentPosition(pos=>{ const d=distanceMeters(pos.coords.latitude,pos.coords.longitude,step.coords.lat,step.coords.lng); if(d<=step.coords.radius){ state.gpsVerified[step.id]=true; save(); render(); } else { if(box){ box.className='feedback ko'; box.textContent=`Encore un peu loin : environ ${Math.round(d)} m.`; } } }, err=>{ if(box){ box.className='feedback ko'; box.textContent='Impossible de vérifier le GPS. Utilise la validation équipe si besoin.'; } }, {enableHighAccuracy:true,timeout:10000,maximumAge:0}); }
-function distanceMeters(lat1,lng1,lat2,lng2){ const R=6371e3; const toRad=x=>x*Math.PI/180; const a=Math.sin((toRad(lat2-lat1))/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin((toRad(lng2-lng1))/2)**2; return 2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
-function startTick(){ setInterval(renderTopbarTick,1000); }
-function renderTopbarTick(){ if(!state.route) return; const el=document.getElementById('pill-elapsed'); const rem=document.getElementById('pill-remaining'); const score=document.getElementById('pill-score'); const step=document.getElementById('pill-step'); if(score) score.textContent='Score '+state.score; if(step) step.textContent='Étape '+Math.min(state.currentStepIndex+1,state.route.steps.length)+'/'+state.route.steps.length; if(el) el.textContent='⏱ '+formatDuration(elapsedMs()); if(rem){ const [targetMin,targetMax]=formatMinutesWindow(state.config.profile,state.config.level); const remainingMs=Math.max(0,targetMax*60000-elapsedMs()); rem.textContent = state.config.timeMode==='challenge' ? '⌛ '+formatDuration(remainingMs) : targetMin+'-'+targetMax+' min'; } }
+initHome();

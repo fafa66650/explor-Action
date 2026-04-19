@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Explor’Action</title>
+  <meta name="theme-color" content="#111319">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://tile.openstreetmap.org">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app" class="theme-shell">
+    <header class="topbar hidden" id="topbar">
+      <div class="tb-left">
+        <button class="icon-btn" id="backBtn" aria-label="Retour">←</button>
+        <img src="assets/logo.jpg" alt="Logo Explor’Action" class="topbar-logo">
+        <div>
+          <div class="eyebrow" id="tbVillage">Explor’Action</div>
+          <div class="tb-title" id="tbTitle">Mission</div>
+        </div>
+      </div>
+      <div class="tb-right">
+        <div class="pill">⏱️ <span id="chrono">00:00</span></div>
+        <div class="pill">⭐ <span id="scoreTop">0</span></div>
+        <div class="pill">💡 <span id="helpTokens">0</span></div>
+      </div>
+    </header>
+
+    <main id="screenRoot"></main>
+  </div>
+
+  <template id="homeTpl">
+    <section class="screen home-screen screen-enter">
+      <div class="hero-card glass hero-gradient">
+        <img src="assets/logo.jpg" alt="Logo Explor’Action" class="hero-logo">
+        <div class="hero-copy">
+          <div class="eyebrow">Exploration sportive et culturelle</div>
+          <h1>Explor’Action</h1>
+          <p class="hero-sub">Découvre chaque village en marchant, en observant, en répondant juste et en gagnant des bonus.</p>
+          <div class="hero-chips">
+            <span class="hero-chip">📍 Vrais lieux</span>
+            <span class="hero-chip">🧠 Énigmes</span>
+            <span class="hero-chip">🎯 Défis utiles</span>
+            <span class="hero-chip">🏆 Classements</span>
+          </div>
+          <div class="hero-actions">
+            <button class="primary big" data-action="play">Jouer maintenant</button>
+            <button class="secondary big" data-action="ranking">Classements & badges</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="village-showcase glass panel-block">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Choisis ton aventure</div>
+            <h2>Chaque village a son style</h2>
+          </div>
+          <p>Argelès, Collioure, Port-Vendres, Banyuls, Laroque, Saint-André et Villelongue-dels-Monts.</p>
+        </div>
+        <div id="villageGrid" class="village-grid"></div>
+      </section>
+
+      <section class="map-section glass panel-block">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Vue d’ensemble</div>
+            <h2>Carte des villages</h2>
+          </div>
+          <p>Repère d’un coup d’œil les aventures disponibles autour d’Argelès-sur-Mer.</p>
+        </div>
+        <div id="villageMap" class="map"></div>
+      </section>
+    </section>
+  </template>
+
+  <template id="setupTpl">
+    <section class="screen setup-screen screen-enter">
+      <div class="mission-head glass hero-mini">
+        <div class="mission-badge" id="setupVillageBadge">Village</div>
+        <h2 id="setupVillageTitle">Préparer la mission</h2>
+        <p id="setupVillageDesc">Paramètre la partie avant de partir.</p>
+        <div class="setup-route-summary">
+          <div class="summary-chip"><span>📚</span> <strong id="setupRouteTitle"></strong></div>
+          <div class="summary-chip"><span>⏱️</span> <strong id="setupRouteDuration"></strong></div>
+          <div class="summary-chip"><span>🧭</span> <strong id="setupRouteDistance"></strong></div>
+        </div>
+      </div>
+      <div class="setup-grid">
+        <article class="glass panel-card">
+          <h3>Équipe</h3>
+          <div class="field-row">
+            <label class="field-label">Mode</label>
+            <div class="choice-row">
+              <button class="choice active" data-mode="solo">Solo</button>
+              <button class="choice" data-mode="team">Équipe</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <label class="field-label" for="teamName">Nom</label>
+            <input id="teamName" class="text-input" maxlength="28" placeholder="Ex. Les Catalans">
+          </div>
+          <div class="field-row">
+            <label class="field-label" for="playerCount">Joueurs</label>
+            <select id="playerCount" class="select-input">
+              <option value="1">1 joueur</option>
+              <option value="2">2 joueurs</option>
+              <option value="3">3 joueurs</option>
+              <option value="4">4 joueurs</option>
+              <option value="5">5+ joueurs</option>
+            </select>
+          </div>
+        </article>
+        <article class="glass panel-card">
+          <h3>Difficulté</h3>
+          <div class="choice-grid" id="difficultyChoices">
+            <button class="choice active" data-difficulty="discover">Découverte</button>
+            <button class="choice" data-difficulty="explorer">Explorateur</button>
+            <button class="choice" data-difficulty="expert">Expert</button>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Tempo</label>
+            <div class="choice-row">
+              <button class="choice active" data-timing="free">Libre</button>
+              <button class="choice" data-timing="challenge">Challenge</button>
+            </div>
+          </div>
+        </article>
+        <article class="glass panel-card panel-guide">
+          <h3>Comment gagner</h3>
+          <ul class="rule-list">
+            <li>Réponds juste pour débloquer l’explication culturelle.</li>
+            <li>Valide le terrain pour prouver que tu es bien sur place.</li>
+            <li>Réussis le défi pour gagner plus de points et parfois un jeton d’aide.</li>
+            <li>Si tu te trompes, une aide se débloque avec pénalité.</li>
+          </ul>
+          <button class="primary big" data-action="startMission">Commencer la mission</button>
+        </article>
+      </div>
+    </section>
+  </template>
+
+  <template id="missionTpl">
+    <section class="screen mission-screen screen-enter">
+      <div class="mission-shell">
+        <aside class="mission-side glass">
+          <div class="step-status village-cover" id="villageCover">
+            <div class="eyebrow" id="routeTitle"></div>
+            <div class="route-hero" id="routeHero"></div>
+          </div>
+          <div class="progress-card">
+            <div class="progress-label-row">
+              <span id="stepProgressMini">Étape 1/4</span>
+              <strong id="progressPercent">25%</strong>
+            </div>
+            <div class="progress-bar"><span id="progressFill"></span></div>
+          </div>
+          <div class="map-wrap">
+            <div id="missionMap" class="map small"></div>
+          </div>
+          <div id="stepList" class="step-list"></div>
+          <div class="score-board">
+            <div><span>Équipe</span><strong id="teamDisplay"></strong></div>
+            <div><span>Défis validés</span><strong id="challengeCount">0</strong></div>
+            <div><span>Erreurs</span><strong id="mistakeCount">0</strong></div>
+          </div>
+        </aside>
+        <section class="mission-main">
+          <div class="mission-top glass">
+            <div>
+              <div class="eyebrow" id="stepProgress">Étape 1/4</div>
+              <h2 id="stepPlace">Lieu</h2>
+              <p id="stepRepere" class="repere"></p>
+            </div>
+            <div class="bonus-stack">
+              <div class="bonus-card">🏅 <span id="bonusLabel">Bonus dispo : défi</span></div>
+              <div class="bonus-card">🎁 <span id="nextReward">Objectif : gagner des points</span></div>
+            </div>
+          </div>
+
+          <article class="stage-card glass">
+            <div class="stage-title"><span>📖</span><h3>Histoire du lieu</h3></div>
+            <p id="stepStory"></p>
+          </article>
+
+          <article class="stage-card glass">
+            <div class="stage-title"><span>🧠</span><h3>Énigme</h3></div>
+            <p id="questionPrompt" class="prompt"></p>
+            <div id="questionOptions" class="option-list"></div>
+            <div class="hint-row">
+              <button id="hintBtn" class="secondary small" disabled>Débloquer l’aide</button>
+              <span id="hintPenalty" class="muted"></span>
+            </div>
+            <div id="hintBox" class="hint-box hidden"></div>
+            <div id="questionFeedback" class="feedback"></div>
+          </article>
+
+          <article class="stage-card glass">
+            <div class="stage-title"><span>👀</span><h3>Validation terrain</h3></div>
+            <p id="fieldPrompt" class="prompt"></p>
+            <div id="fieldOptions" class="option-list"></div>
+            <div class="hint-row">
+              <button id="fieldHintBtn" class="secondary small" disabled>Indice terrain</button>
+              <span id="fieldHintPenalty" class="muted"></span>
+            </div>
+            <div id="fieldHintBox" class="hint-box hidden"></div>
+            <div id="fieldFeedback" class="feedback"></div>
+          </article>
+
+          <article class="stage-card glass">
+            <div class="stage-title"><span>🎯</span><h3>Défi utile</h3></div>
+            <div class="challenge-grid">
+              <div>
+                <strong id="challengeTitle"></strong>
+                <p id="challengeInstruction" class="prompt"></p>
+                <p id="challengeReward" class="muted"></p>
+              </div>
+              <div class="challenge-actions">
+                <div class="mini-timer">
+                  <span>Mini-chrono</span>
+                  <strong id="miniChrono">00:30</strong>
+                </div>
+                <div class="choice-row wrap">
+                  <button class="secondary small" id="miniTimerBtn">Lancer le défi</button>
+                  <button class="primary small" id="challengeDoneBtn">Défi réussi</button>
+                </div>
+                <div id="challengeFeedback" class="feedback"></div>
+              </div>
+            </div>
+          </article>
+
+          <article id="cultureCard" class="stage-card glass hidden culture-card">
+            <div class="stage-title"><span>💬</span><h3>Le savais-tu ?</h3></div>
+            <p id="cultureText"></p>
+          </article>
+
+          <div class="bottom-actions">
+            <button id="nextBtn" class="primary big" disabled>Étape suivante</button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </template>
+
+  <template id="endTpl">
+    <section class="screen end-screen screen-enter">
+      <div class="end-card glass hero-gradient">
+        <div class="eyebrow" id="endVillage">Village</div>
+        <h2>Mission terminée</h2>
+        <p id="endTagline"></p>
+        <div class="stats-grid">
+          <div class="stat-card"><span>Score</span><strong id="endScore">0</strong></div>
+          <div class="stat-card"><span>Temps</span><strong id="endTime">00:00</strong></div>
+          <div class="stat-card"><span>Défis</span><strong id="endChallenges">0</strong></div>
+          <div class="stat-card"><span>Aides utilisées</span><strong id="endHints">0</strong></div>
+        </div>
+        <div class="badge-row" id="badgeRow"></div>
+        <div class="end-actions">
+          <button class="primary" data-action="restartVillage">Rejouer ce village</button>
+          <button class="secondary" data-action="home">Retour accueil</button>
+        </div>
+      </div>
+      <div class="ranking-block glass panel-block">
+        <h3>Classement global local</h3>
+        <div id="rankingList"></div>
+      </div>
+    </section>
+  </template>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="data/villages.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
