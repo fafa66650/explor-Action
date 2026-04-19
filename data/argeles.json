@@ -1,0 +1,218 @@
+{
+  "village": "Argelès-sur-Mer",
+  "routes": [
+    {
+      "id": "historique",
+      "title": "Argelès historique",
+      "steps": [
+        {
+          "id": 1,
+          "category": "Départ",
+          "title": "Casa de l’Albera",
+          "address": "4 place des Castellans, Argelès-Village",
+          "coords": { "lat": 42.5457, "lng": 3.0245 },
+          "radius": 45,
+          "distanceHint": "point de départ",
+          "repere": "Cherche la place des Castellans et le bâtiment culturel portant le nom Casa de l’Albera.",
+          "approach": "Place-toi devant l’entrée du lieu culturel sur la place.",
+          "info": "La Casa de l’Albera est présentée par la commune comme le lieu culturel à visiter pour retracer l’histoire du massif des Albères, ses traditions et ses savoir-faire.",
+          "photoRequired": false,
+          "points": 20,
+          "levels": {
+            "decouverte": {
+              "type": "mcq",
+              "question": "Quel nom complète ce lieu : Casa de l’… ?",
+              "choices": ["Albera", "Massane", "Prat"],
+              "answer": "Albera",
+              "hint": "Lis bien le nom affiché sur place.",
+              "answers": ["albera"]
+            },
+            "explorateur": {
+              "type": "text",
+              "question": "Quel massif ce lieu aide-t-il à découvrir ?",
+              "answers": ["albera", "les alberes", "les albères", "massif des alberes", "massif des albères"],
+              "hint": "Le mot est présent dans le nom du lieu."
+            },
+            "expert": {
+              "type": "text",
+              "question": "Ce lieu raconte l’histoire et les traditions de quel massif ?",
+              "answers": ["massif des alberes", "massif des albères", "les alberes", "les albères"],
+              "hint": "Réponse en deux mots principaux."
+            }
+          },
+          "challenge": {
+            "enfant": "10 squats calmes devant la place.",
+            "ado": "20 squats + 10 montées de genoux.",
+            "adulte": "24 squats + 20 montées de genoux."
+          }
+        },
+        {
+          "id": 2,
+          "category": "Village ancien",
+          "title": "Place de la République et ruelles du vieux village",
+          "address": "Place de la République, Argelès-Village",
+          "coords": { "lat": 42.54625, "lng": 3.02325 },
+          "radius": 50,
+          "distanceHint": "à 2-3 minutes à pied",
+          "repere": "Va vers le cœur du vieux village, place de la République, puis regarde les ruelles et les façades autour de toi.",
+          "approach": "Quand tu vois la place et plusieurs rues anciennes autour, tu es au bon endroit.",
+          "info": "Le vieux village d’Argelès conserve une ambiance catalane et des maisons dont certaines datent de la fin du Moyen Âge. La première mention connue d’Argelès remonte à 879.",
+          "photoRequired": true,
+          "photoInstruction": "Prends une photo d’une ruelle ou d’une façade ancienne du vieux village.",
+          "points": 25,
+          "levels": {
+            "decouverte": {
+              "type": "mcq",
+              "question": "La première mention connue d’Argelès remonte à quelle année ?",
+              "choices": ["879", "1659", "1939"],
+              "answer": "879",
+              "hint": "C’est très ancien.",
+              "answers": ["879"]
+            },
+            "explorateur": {
+              "type": "text",
+              "question": "Quelle année correspond à la première mention connue d’Argelès ?",
+              "answers": ["879"],
+              "hint": "Réponse en trois chiffres."
+            },
+            "expert": {
+              "type": "text",
+              "question": "Quelle grande période est encore visible dans certaines maisons du vieux village ?",
+              "answers": ["moyen age", "moyen âge", "fin du moyen age", "fin du moyen âge"],
+              "hint": "Période historique avant les temps modernes."
+            }
+          },
+          "challenge": {
+            "enfant": "30 secondes de marche active puis montre un détail ancien à ton équipe.",
+            "ado": "45 secondes de marche active + 10 jumping jacks.",
+            "adulte": "1 minute de marche active + 15 jumping jacks."
+          }
+        },
+        {
+          "id": 3,
+          "category": "Patrimoine",
+          "title": "Église Notre-Dame del Prat",
+          "address": "Église Notre-Dame del Prat, Argelès-Village",
+          "coords": { "lat": 42.546136, "lng": 3.022906 },
+          "radius": 45,
+          "distanceHint": "à 2 minutes à pied",
+          "repere": "Cherche la grande façade de l’église et surtout son clocher très visible.",
+          "approach": "Place-toi face à l’église ou à proximité du clocher.",
+          "info": "D’après l’office de tourisme, le clocher de Notre-Dame del Prat est classé aux Monuments historiques, culmine à 34 m et servait autrefois de tour d’alerte, tour de guet et clocher.",
+          "photoRequired": false,
+          "points": 25,
+          "levels": {
+            "decouverte": {
+              "type": "mcq",
+              "question": "À quelle hauteur culmine le clocher ?",
+              "choices": ["14 m", "24 m", "34 m"],
+              "answer": "34 m",
+              "hint": "Le clocher est très haut pour le département.",
+              "answers": ["34 m", "34"]
+            },
+            "explorateur": {
+              "type": "text",
+              "question": "Écris le nombre de mètres du clocher.",
+              "answers": ["34", "34 m", "34 metres", "34 mètres"],
+              "hint": "Seulement deux chiffres."
+            },
+            "expert": {
+              "type": "text",
+              "question": "Cite une ancienne fonction du clocher.",
+              "answers": ["tour d alerte", "tour d'alerte", "tour de guet", "clocher", "defensive", "défensive"],
+              "hint": "Il servait aussi à surveiller."
+            }
+          },
+          "challenge": {
+            "enfant": "10 squats + 10 secondes de bras levés.",
+            "ado": "15 squats + 15 secondes de gainage debout contre un mur.",
+            "adulte": "20 squats + 20 secondes de gainage."
+          }
+        },
+        {
+          "id": 4,
+          "category": "Mémoire",
+          "title": "Mémorial du camp d’Argelès-sur-Mer",
+          "address": "26 avenue de la Libération, Argelès-sur-Mer",
+          "coords": { "lat": 42.546146, "lng": 3.0235245 },
+          "radius": 50,
+          "distanceHint": "à proximité du village",
+          "repere": "Cherche le lieu consacré à la mémoire du camp et de la Retirada.",
+          "approach": "Quand tu vois le mémorial dédié aux réfugiés espagnols, tu peux lancer l’étape.",
+          "info": "Le mémorial rend hommage aux milliers de réfugiés espagnols arrivés en 1939 après avoir fui la dictature franquiste à la fin de la guerre civile espagnole.",
+          "photoRequired": false,
+          "points": 25,
+          "levels": {
+            "decouverte": {
+              "type": "mcq",
+              "question": "À quelle année renvoie cette mémoire à Argelès ?",
+              "choices": ["879", "1939", "2002"],
+              "answer": "1939",
+              "hint": "C’est lié à la Retirada.",
+              "answers": ["1939"]
+            },
+            "explorateur": {
+              "type": "text",
+              "question": "À qui le mémorial rend-il hommage ?",
+              "answers": ["refugies espagnols", "réfugiés espagnols", "republicains espagnols", "républicains espagnols"],
+              "hint": "Ils ont fui le franquisme."
+            },
+            "expert": {
+              "type": "text",
+              "question": "Quel mot résume le mieux la fonction de ce lieu ?",
+              "answers": ["memoire", "mémoire"],
+              "hint": "C’est un lieu de souvenir."
+            }
+          },
+          "challenge": {
+            "enfant": "20 secondes de marche calme puis 20 secondes de marche active.",
+            "ado": "30 secondes de marche active + 10 montées de genoux.",
+            "adulte": "45 secondes de marche active + 15 montées de genoux."
+          }
+        },
+        {
+          "id": 5,
+          "category": "Front de mer",
+          "title": "Promenade du front de mer",
+          "address": "Promenade du front de mer, Argelès-sur-Mer",
+          "coords": { "lat": 42.544586, "lng": 3.051233 },
+          "radius": 70,
+          "distanceHint": "dernière grande étape",
+          "repere": "Va jusqu’à la promenade parallèle à la plage. Cherche la vue dégagée sur la mer et l’allée aménagée.",
+          "approach": "Quand tu es sur la promenade face à la mer, près de la plage, tu peux valider ta présence.",
+          "info": "La promenade du front de mer est décrite par la commune comme une promenade de 1,6 km qui s’étend de Port Argelès jusqu’au bois des pins. Le littoral d’Argelès compte près de 10 km de côtes, dont 7 km de sable et 2 km de criques.",
+          "photoRequired": true,
+          "photoInstruction": "Prends une photo de la promenade ou de l’horizon marin pour garder une preuve de passage.",
+          "points": 30,
+          "levels": {
+            "decouverte": {
+              "type": "mcq",
+              "question": "La promenade mène jusqu’à quel lieu ?",
+              "choices": ["Le bois des pins", "La gare", "Le château de Salses"],
+              "answer": "Le bois des pins",
+              "hint": "Réponse parmi les choix proposés.",
+              "answers": ["le bois des pins", "bois des pins"]
+            },
+            "explorateur": {
+              "type": "text",
+              "question": "Écris le nom du lieu où la promenade rejoint la fin de son parcours.",
+              "answers": ["bois des pins", "le bois des pins"],
+              "hint": "Deux mots principaux."
+            },
+            "expert": {
+              "type": "text",
+              "question": "Quelle longueur fait la promenade du front de mer ?",
+              "answers": ["1 6 km", "1,6 km", "1.6 km", "1 6", "1,6"],
+              "hint": "Un peu plus d’un kilomètre et demi."
+            }
+          },
+          "challenge": {
+            "enfant": "30 secondes de course légère sur place face à la mer.",
+            "ado": "45 secondes de course sur place + 10 sauts étoile.",
+            "adulte": "1 minute de course sur place + 15 sauts étoile."
+          }
+        }
+      ]
+    }
+  ]
+}

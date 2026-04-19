@@ -1,23 +1,21 @@
-# FAFATRAINING Explore — Argelès-sur-Mer
+Explor’Action — Argelès V2
 
-Base légère et compatible GitHub Pages pour un parcours ludique, culturel et sportif.
+Contenu :
+- accueil simple
+- configuration de partie (solo/equipe, joueurs, niveau, profil)
+- parcours historique jouable
+- étapes une par une
+- validation par réponse + défi + proximité GPS ou validation manuelle
+- photo-preuve sur certaines étapes
+- score + progression
 
-## Contenu
-- `index.html` : interface principale
-- `style.css` : design sombre ergonomique
-- `js/app.js` : moteur front simple
-- `data/argeles-historique.json` : parcours Argelès historique
-- `assets/logo-placeholder.svg` : emplacement de logo à remplacer
+Utilisation GitHub Pages :
+1. Dézipper le projet.
+2. Envoyer le contenu du dossier sur la branche GitHub Pages.
+3. Ouvrir index.html.
+4. Autoriser la géolocalisation sur mobile pour le mode proximité.
 
-## Mise en ligne GitHub Pages
-1. Déposer les fichiers à la racine d'un dépôt GitHub.
-2. Activer GitHub Pages sur la branche principale.
-3. Ouvrir l'URL publique.
-
-## Remplacer le logo
-Remplace `assets/logo-placeholder.svg` par ton vrai logo en gardant le même nom, ou modifie la balise `<img>` dans `index.html`.
-
-## Notes
-- La progression est stockée en `localStorage`.
-- Aucune boussole n'est utilisée.
-- Chaque autre village peut être ajouté avec un nouveau fichier JSON.
+Important :
+- La photo-preuve est stockée seulement pendant la partie courante.
+- La validation photo ne reconnaît pas automatiquement l’image ; elle sert de preuve terrain.
+- Aucun QR code n’est obligatoire dans cette version V2.

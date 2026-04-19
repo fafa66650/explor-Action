@@ -1,39 +1,219 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAFATRAINING Explore — Argelès-sur-Mer</title>
-  <meta name="description" content="Parcours ludique, sportif et culturel à Argelès-sur-Mer, compatible GitHub Pages." />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Explor’Action — Argelès-sur-Mer</title>
+  <meta name="theme-color" content="#0b1110">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <img src="assets/logo-placeholder.svg" alt="Logo FAFATRAINING" class="brand-logo" />
+    <header class="topbar">
+      <button id="backBtn" class="icon-btn hidden" aria-label="Retour">←</button>
+      <div class="brand-wrap">
+        <img src="assets/logo-ft.jpg" alt="Logo FAFATRAINING" class="brand-logo">
         <div>
-          <div class="brand-name">FAFATRAINING</div>
-          <div class="brand-sub">Explore</div>
+          <div class="brand-title">Explor’Action</div>
+          <div class="brand-subtitle">Découvre Argelès en jouant</div>
         </div>
       </div>
+      <button id="homeBtn" class="icon-btn hidden" aria-label="Accueil">⌂</button>
+    </header>
 
-      <nav class="side-nav">
-        <button class="nav-btn active" data-view="home">Accueil</button>
-        <button class="nav-btn" data-view="mission">Mission Argelès</button>
-        <button class="nav-btn" data-view="progress">Progression</button>
-        <button class="nav-btn" data-view="about">À propos</button>
-      </nav>
-
-      <div class="side-note">
-        <strong>Village pilote</strong>
-        <p>Argelès-sur-Mer — parcours historique jouable à pied, avec culture locale et défis adaptés.</p>
-      </div>
-    </aside>
-
-    <main class="main" id="app"></main>
+    <main id="screen"></main>
   </div>
 
-  <script src="js/app.js"></script>
+  <template id="homeTemplate">
+    <section class="card hero-card">
+      <span class="badge">Village pilote</span>
+      <h1>Argelès historique</h1>
+      <p>Un parcours jouable étape par étape, avec vrais lieux, énigmes validées, défis adaptés et progression claire.</p>
+      <div class="hero-actions">
+        <button class="primary" data-go="setup">Jouer</button>
+        <button class="secondary" data-go="routes">Voir les parcours</button>
+      </div>
+      <div class="hero-stats">
+        <div><strong>30 à 75 min</strong><span>selon niveau, âge et équipe</span></div>
+        <div><strong>5 étapes</strong><span>sans boussole floue</span></div>
+        <div><strong>0 QR obligatoire</strong><span>GPS + repères + réponses</span></div>
+      </div>
+    </section>
+
+    <section class="card compact-grid">
+      <div>
+        <h2>Comment on joue</h2>
+        <ol class="clean-list">
+          <li>Je choisis mon mode, mon niveau et mon profil.</li>
+          <li>Je vais vers le lieu indiqué grâce au repère visuel.</li>
+          <li>Je vérifie ma proximité, je réponds et je fais le défi.</li>
+        </ol>
+      </div>
+      <div>
+        <h2>Ce qui rend le jeu fiable</h2>
+        <ul class="clean-list">
+          <li>Vrais lieux d’Argelès</li>
+          <li>Réponses automatiques quand c’est possible</li>
+          <li>Photo-preuve sur certaines étapes</li>
+          <li>Validation manuelle si GPS indisponible</li>
+        </ul>
+      </div>
+    </section>
+  </template>
+
+  <template id="routesTemplate">
+    <section class="card">
+      <h1>Parcours d’Argelès</h1>
+      <div class="route-list">
+        <button class="route-card active-route" data-route="historique">
+          <span class="route-tag">Jouable</span>
+          <strong>Historique</strong>
+          <p>Village ancien, patrimoine, mémoire et front de mer.</p>
+        </button>
+        <div class="route-card disabled-route">
+          <span class="route-tag muted-tag">À venir</span>
+          <strong>Culture & terroir</strong>
+          <p>Marchés, produits locaux, traditions catalanes.</p>
+        </div>
+        <div class="route-card disabled-route">
+          <span class="route-tag muted-tag">À venir</span>
+          <strong>Mer & environnement</strong>
+          <p>Plage, promenade, paysages et littoral.</p>
+        </div>
+      </div>
+      <button class="primary full" data-go="setup">Configurer ma partie</button>
+    </section>
+  </template>
+
+  <template id="setupTemplate">
+    <section class="card">
+      <h1>Préparer la mission</h1>
+      <div class="field-stack">
+        <div class="field-block">
+          <label>Mode de jeu</label>
+          <div id="modeChoices" class="choice-row"></div>
+        </div>
+        <div class="field-block">
+          <label>Nombre de joueurs</label>
+          <div id="playerChoices" class="choice-row"></div>
+        </div>
+        <div class="field-block hidden" id="teamBlock">
+          <label for="teamName">Nom d’équipe</label>
+          <input id="teamName" class="text-input" type="text" maxlength="24" placeholder="Ex. Les Albères">
+        </div>
+        <div class="field-block">
+          <label>Niveau</label>
+          <div id="levelChoices" class="choice-row stacked"></div>
+        </div>
+        <div class="field-block">
+          <label>Profil</label>
+          <div id="audienceChoices" class="choice-row"></div>
+        </div>
+      </div>
+      <div class="summary-box" id="setupSummary"></div>
+      <button class="primary full" id="startMissionBtn">Commencer la mission</button>
+    </section>
+  </template>
+
+  <template id="gameTemplate">
+    <section class="step-top card slim-card">
+      <div>
+        <div class="eyebrow" id="routeName"></div>
+        <strong id="stepNumber"></strong>
+      </div>
+      <div class="score-chip">Score <span id="scoreValue">0</span></div>
+    </section>
+
+    <section class="card step-card">
+      <span class="badge" id="categoryBadge"></span>
+      <h1 id="stepTitle"></h1>
+      <p class="location-line" id="stepLocation"></p>
+
+      <div class="progress-track"><span id="progressFill"></span></div>
+
+      <section class="mini-section">
+        <h2>Repère visuel</h2>
+        <p id="stepRepere"></p>
+      </section>
+
+      <section class="mini-section">
+        <h2>À découvrir</h2>
+        <p id="stepInfo"></p>
+      </section>
+
+      <section class="mini-section gps-box">
+        <div class="section-head">
+          <h2>Arrivée sur place</h2>
+          <span class="gps-pill" id="gpsState">GPS non vérifié</span>
+        </div>
+        <p id="gpsHelp"></p>
+        <div class="button-row two">
+          <button class="secondary" id="gpsBtn">Vérifier ma position</button>
+          <button class="secondary" id="manualBtn">Valider avec l’équipe</button>
+        </div>
+        <p class="helper-text" id="gpsFeedback"></p>
+      </section>
+
+      <section class="mini-section question-box">
+        <h2>Énigme</h2>
+        <p id="questionText"></p>
+        <div id="answerZone"></div>
+        <p class="helper-text" id="hintText"></p>
+      </section>
+
+      <section class="mini-section challenge-box">
+        <h2>Défi</h2>
+        <p id="challengeText"></p>
+        <label class="checkline"><input type="checkbox" id="challengeCheck"> Défi réalisé</label>
+      </section>
+
+      <section class="mini-section photo-box hidden" id="photoBlock">
+        <h2>Photo-preuve</h2>
+        <p id="photoInstruction"></p>
+        <input id="photoInput" type="file" accept="image/*" capture="environment">
+        <img id="photoPreview" class="photo-preview hidden" alt="Aperçu photo">
+      </section>
+
+      <button class="primary full" id="validateBtn">Valider l’étape</button>
+      <div id="feedbackBox" class="feedback-box hidden"></div>
+    </section>
+  </template>
+
+  <template id="progressTemplate">
+    <section class="card">
+      <h1>Ma progression</h1>
+      <div class="summary-grid">
+        <div class="mini-card"><span>Équipe / joueur</span><strong id="progressTeam"></strong></div>
+        <div class="mini-card"><span>Score</span><strong id="progressScore"></strong></div>
+        <div class="mini-card"><span>Étapes validées</span><strong id="progressSteps"></strong></div>
+      </div>
+      <div id="progressList" class="progress-list"></div>
+      <div class="button-row two">
+        <button class="primary" id="resumeBtn">Reprendre</button>
+        <button class="secondary danger" id="restartBtn">Recommencer</button>
+      </div>
+    </section>
+  </template>
+
+  <template id="completeTemplate">
+    <section class="card hero-card">
+      <span class="badge">Mission terminée</span>
+      <h1>Bravo !</h1>
+      <p id="finalMessage"></p>
+      <div class="summary-grid">
+        <div class="mini-card"><span>Score final</span><strong id="finalScore"></strong></div>
+        <div class="mini-card"><span>Badge</span><strong>Explorateur d’Argelès</strong></div>
+      </div>
+      <div class="button-row two">
+        <button class="primary" data-go="home">Accueil</button>
+        <button class="secondary" id="replayBtn">Rejouer</button>
+      </div>
+    </section>
+  </template>
+
+  <script src="app.js"></script>
 </body>
 </html>
