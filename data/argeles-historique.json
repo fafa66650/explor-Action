@@ -1,0 +1,451 @@
+{
+  "id": "argeles-historique",
+  "village": "Argelès-sur-Mer",
+  "title": "Argelès historique",
+  "subtitle": "Patrimoine, mémoire et front de mer",
+  "description": "Un parcours précis, jouable étape par étape, avec vrais lieux, repères visuels, énigmes validées et bonus utiles.",
+  "distanceKm": "2,5 à 3,5 km",
+  "stepsCount": 5,
+  "timing": {
+    "enfant": {
+      "easy": [
+        30,
+        40
+      ],
+      "medium": [
+        40,
+        55
+      ],
+      "hard": [
+        55,
+        70
+      ]
+    },
+    "ado": {
+      "easy": [
+        35,
+        45
+      ],
+      "medium": [
+        45,
+        60
+      ],
+      "hard": [
+        60,
+        75
+      ]
+    },
+    "adulte": {
+      "easy": [
+        40,
+        50
+      ],
+      "medium": [
+        50,
+        65
+      ],
+      "hard": [
+        65,
+        80
+      ]
+    }
+  },
+  "scoreRules": {
+    "answer": 20,
+    "firstTryBonus": 10,
+    "gpsBonus": 10,
+    "challengeBonus": 15,
+    "photoBonus": 10,
+    "teamBonus": 5,
+    "timeBonusFast": 30,
+    "timeBonusMid": 15
+  },
+  "steps": [
+    {
+      "id": "casa",
+      "phase": "Départ",
+      "title": "Casa de l’Albera",
+      "address": "4 place des Castellans, Argelès-Village",
+      "coords": {
+        "lat": 42.5462,
+        "lng": 3.0222,
+        "radius": 90
+      },
+      "visualHint": "Cherche la place des Castellans et le bâtiment culturel nommé Casa de l’Albera.",
+      "arrivalHint": "Place-toi devant l’entrée du lieu culturel sur la place.",
+      "discovery": "La Casa de l’Albera est présentée par la commune comme un lieu pour comprendre le massif des Albères, ses traditions et ses savoir-faire.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Quel nom complète ce lieu : Casa de l’… ?",
+          "options": [
+            "Albera",
+            "Massane",
+            "Prat"
+          ],
+          "answers": [
+            "albera"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Sur quelle place se trouve ce lieu ?",
+          "options": [
+            "Place des Castellans",
+            "Place Gambetta",
+            "Place de l’Europe"
+          ],
+          "answers": [
+            "place des castellans"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Que retrace ce lieu culturel ?",
+          "options": [
+            "Le massif des Albères, ses traditions et ses savoir-faire",
+            "Uniquement l’histoire de la plage",
+            "Seulement le port d’Argelès"
+          ],
+          "answers": [
+            "le massif des albères, ses traditions et ses savoir-faire",
+            "massif des albères, ses traditions et ses savoir-faire"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "physical",
+        "purpose": "Le défi rapporte des points bonus. En équipe, chacun peut passer à tour de rôle.",
+        "enfant": {
+          "easy": "8 squats + 8 montées de genoux.",
+          "medium": "12 squats + 10 montées de genoux.",
+          "hard": "15 squats + 20 s de gainage."
+        },
+        "ado": {
+          "easy": "12 squats + 10 montées de genoux.",
+          "medium": "20 squats + 10 montées de genoux.",
+          "hard": "25 squats + 30 s de gainage."
+        },
+        "adulte": {
+          "easy": "15 squats + 10 montées de genoux.",
+          "medium": "20 squats + 10 montées de genoux.",
+          "hard": "30 squats + 40 s de gainage."
+        }
+      },
+      "proof": {
+        "type": "none",
+        "label": ""
+      }
+    },
+    {
+      "id": "eglise",
+      "phase": "Patrimoine",
+      "title": "Église Notre-Dame del Prat",
+      "address": "Cœur du vieux village",
+      "coords": {
+        "lat": 42.54635,
+        "lng": 3.0226,
+        "radius": 90
+      },
+      "visualHint": "Repère le grand clocher de pierre et approche-toi de la façade principale.",
+      "arrivalHint": "Place-toi face à l’église et lève les yeux vers le clocher.",
+      "discovery": "L’office de tourisme indique que le clocher est classé, culmine à 34 m et servait de tour d’alerte et de guet.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "À combien de mètres culmine le clocher ?",
+          "options": [
+            "24 m",
+            "34 m",
+            "44 m"
+          ],
+          "answers": [
+            "34 m",
+            "34"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Le clocher servait aussi de…",
+          "options": [
+            "Tour de guet",
+            "Phare maritime",
+            "Marché couvert"
+          ],
+          "answers": [
+            "tour de guet"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Qu’est-ce qui est mis en avant sur ce clocher ?",
+          "options": [
+            "Sa fonction d’alerte et de guet",
+            "Son toit en bois",
+            "Ses vitraux modernes"
+          ],
+          "answers": [
+            "sa fonction d’alerte et de guet",
+            "fonction d’alerte et de guet"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "creative",
+        "purpose": "Le défi sert à gagner un bonus sans bloquer la mission.",
+        "enfant": {
+          "easy": "Fais la statue d’une tour pendant 10 s.",
+          "medium": "Mime une tour de guet pendant 15 s.",
+          "hard": "Mime une tour de guet 20 s sans bouger."
+        },
+        "ado": {
+          "easy": "Mime une tour de guet pendant 15 s.",
+          "medium": "Mime la tour 20 s puis tourne sur toi-même.",
+          "hard": "Mime la tour 25 s en équilibre sur un pied."
+        },
+        "adulte": {
+          "easy": "Mime une tour de guet pendant 15 s.",
+          "medium": "Mime la tour 20 s avec demi-tour lent.",
+          "hard": "Mime la tour 30 s avec posture stable."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Prends une photo de l’église ou de ton équipe face au clocher."
+      }
+    },
+    {
+      "id": "vieux",
+      "phase": "Mémoire du village",
+      "title": "Vieux village d’Argelès",
+      "address": "Ruelles autour du centre ancien",
+      "coords": {
+        "lat": 42.54645,
+        "lng": 3.0219,
+        "radius": 140
+      },
+      "visualHint": "Cherche une petite place entourée de ruelles anciennes et de façades de pierre.",
+      "arrivalHint": "Quand tu vois la place et plusieurs rues anciennes autour, tu es au bon endroit.",
+      "discovery": "Le vieux village d’Argelès conserve une ambiance catalane et des maisons dont certaines datent de la fin du Moyen Âge. La première mention connue d’Argelès remonte à 879.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "La première mention connue d’Argelès remonte à quelle année ?",
+          "options": [
+            "879",
+            "1659",
+            "1939"
+          ],
+          "answers": [
+            "879"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Certaines maisons du vieux village datent de…",
+          "options": [
+            "La fin du Moyen Âge",
+            "Les années 1980",
+            "La Belle Époque"
+          ],
+          "answers": [
+            "la fin du moyen âge",
+            "fin du moyen âge"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Que garde le vieux village aujourd’hui ?",
+          "options": [
+            "Une ambiance catalane et des ruelles héritées du passé",
+            "Un quartier industriel moderne",
+            "Un front de mer portuaire"
+          ],
+          "answers": [
+            "une ambiance catalane et des ruelles héritées du passé",
+            "ambiance catalane et des ruelles héritées du passé"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "observation",
+        "purpose": "Le défi aide à vraiment regarder le lieu.",
+        "enfant": {
+          "easy": "45 s de marche active + 8 jumping jacks.",
+          "medium": "50 s de marche active + 10 jumping jacks.",
+          "hard": "1 min de marche active + 12 jumping jacks."
+        },
+        "ado": {
+          "easy": "45 s de marche active + 10 jumping jacks.",
+          "medium": "1 min de marche active + 12 jumping jacks.",
+          "hard": "1 min + 15 jumping jacks."
+        },
+        "adulte": {
+          "easy": "50 s de marche active + 10 jumping jacks.",
+          "medium": "1 min + 15 jumping jacks.",
+          "hard": "1 min + 20 jumping jacks."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Prends une photo d’une ruelle ou d’une façade ancienne."
+      }
+    },
+    {
+      "id": "memorial",
+      "phase": "Mémoire",
+      "title": "Mémorial du camp d’Argelès",
+      "address": "Secteur mémorial / espace mémoire",
+      "coords": {
+        "lat": 42.56,
+        "lng": 3.034,
+        "radius": 180
+      },
+      "visualHint": "Cherche le lieu de mémoire consacré aux réfugiés espagnols arrivés en 1939.",
+      "arrivalHint": "Place-toi devant le mémorial ou l’espace de mémoire.",
+      "discovery": "Le mémorial du camp rend hommage aux réfugiés espagnols arrivés en 1939 après la guerre civile espagnole.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "À quelle année renvoie ce lieu de mémoire ?",
+          "options": [
+            "1914",
+            "1939",
+            "1968"
+          ],
+          "answers": [
+            "1939"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Ce mémorial rend hommage à qui ?",
+          "options": [
+            "Aux réfugiés espagnols",
+            "Aux pêcheurs banyulencs",
+            "Aux artistes fauves"
+          ],
+          "answers": [
+            "aux réfugiés espagnols",
+            "refugiés espagnols"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Que représente ce lieu aujourd’hui ?",
+          "options": [
+            "Un lieu de mémoire",
+            "Une caserne militaire",
+            "Un marché couvert"
+          ],
+          "answers": [
+            "un lieu de mémoire",
+            "lieu de mémoire"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "reflection",
+        "purpose": "Ici, le défi est calme et sert à marquer le temps de mémoire.",
+        "enfant": {
+          "easy": "20 s debout en silence puis 4 respirations lentes.",
+          "medium": "25 s en silence puis 5 respirations lentes.",
+          "hard": "30 s en silence puis 6 respirations lentes."
+        },
+        "ado": {
+          "easy": "25 s en silence puis 5 respirations lentes.",
+          "medium": "30 s en silence puis 6 respirations lentes.",
+          "hard": "35 s en silence puis 8 respirations lentes."
+        },
+        "adulte": {
+          "easy": "25 s en silence puis 5 respirations lentes.",
+          "medium": "35 s en silence puis 8 respirations lentes.",
+          "hard": "40 s en silence puis 10 respirations lentes."
+        }
+      },
+      "proof": {
+        "type": "team",
+        "label": "Validation avec l’équipe ou l’animateur"
+      }
+    },
+    {
+      "id": "promenade",
+      "phase": "Final",
+      "title": "Front de mer d’Argelès",
+      "address": "Promenade entre Port Argelès et le bois des pins",
+      "coords": {
+        "lat": 42.5489,
+        "lng": 3.045,
+        "radius": 220
+      },
+      "visualHint": "Cherche la promenade en bord de mer.",
+      "arrivalHint": "Place-toi sur la promenade du front de mer, face à la plage.",
+      "discovery": "La promenade du front de mer mesure environ 1,6 km entre Port Argelès et le bois des pins.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Quelle longueur est indiquée pour la promenade du front de mer ?",
+          "options": [
+            "0,6 km",
+            "1,6 km",
+            "3,6 km"
+          ],
+          "answers": [
+            "1,6 km",
+            "1.6 km",
+            "1,6"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "La promenade relie Port Argelès et…",
+          "options": [
+            "Le bois des pins",
+            "Le château royal",
+            "Le cloître de Saint-André"
+          ],
+          "answers": [
+            "le bois des pins",
+            "bois des pins"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel type de paysage termine cette mission ?",
+          "options": [
+            "Le front de mer méditerranéen",
+            "Un cloître roman",
+            "Un port en eau profonde"
+          ],
+          "answers": [
+            "le front de mer méditerranéen",
+            "front de mer méditerranéen"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "physical",
+        "purpose": "Un final dynamique qui apporte un bonus de fin.",
+        "enfant": {
+          "easy": "30 s de course légère ou marche rapide.",
+          "medium": "40 s de course légère.",
+          "hard": "45 s de course légère + 5 burpees."
+        },
+        "ado": {
+          "easy": "40 s de course légère.",
+          "medium": "50 s de course + 5 squats.",
+          "hard": "1 min de course + 5 burpees."
+        },
+        "adulte": {
+          "easy": "45 s de course légère.",
+          "medium": "1 min de course + 5 squats.",
+          "hard": "1 min de course + 8 burpees."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Prends une photo finale face à la mer."
+      }
+    }
+  ]
+}

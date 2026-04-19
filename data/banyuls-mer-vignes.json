@@ -1,0 +1,448 @@
+{
+  "id": "banyuls-mer-vignes",
+  "village": "Banyuls-sur-Mer",
+  "title": "Banyuls mer & vignes",
+  "subtitle": "Maillol, biodiversité et vignoble",
+  "description": "Une mission mêlant mer, culture scientifique, sculptures et terroir.",
+  "distanceKm": "2,5 à 3,5 km",
+  "stepsCount": 5,
+  "timing": {
+    "enfant": {
+      "easy": [
+        30,
+        40
+      ],
+      "medium": [
+        40,
+        55
+      ],
+      "hard": [
+        55,
+        70
+      ]
+    },
+    "ado": {
+      "easy": [
+        35,
+        45
+      ],
+      "medium": [
+        45,
+        60
+      ],
+      "hard": [
+        60,
+        75
+      ]
+    },
+    "adulte": {
+      "easy": [
+        40,
+        50
+      ],
+      "medium": [
+        50,
+        65
+      ],
+      "hard": [
+        65,
+        80
+      ]
+    }
+  },
+  "scoreRules": {
+    "answer": 20,
+    "firstTryBonus": 10,
+    "gpsBonus": 10,
+    "challengeBonus": 15,
+    "photoBonus": 10,
+    "teamBonus": 5,
+    "timeBonusFast": 30,
+    "timeBonusMid": 15
+  },
+  "steps": [
+    {
+      "id": "office-port",
+      "phase": "Départ",
+      "title": "Port de Banyuls-sur-Mer",
+      "address": "Avenue de la République / port",
+      "coords": {
+        "lat": 42.4826,
+        "lng": 3.1289,
+        "radius": 140
+      },
+      "visualHint": "Cherche le port ou le secteur de l’office de tourisme.",
+      "arrivalHint": "Place-toi vers le port ou le front de mer.",
+      "discovery": "Le site officiel présente Banyuls comme un port de marins de tous horizons et met en avant la mer, les plages et les sentiers.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Quel mot convient le mieux à Banyuls ici ?",
+          "options": [
+            "Port",
+            "Abbaye",
+            "Obélisque"
+          ],
+          "answers": [
+            "port"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Le site met surtout en avant…",
+          "options": [
+            "La mer, les plages et les sentiers",
+            "Le ski alpin",
+            "Les remparts d’un château royal"
+          ],
+          "answers": [
+            "la mer, les plages et les sentiers",
+            "mer, les plages et les sentiers"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel type d’ambiance commence le parcours ?",
+          "options": [
+            "Maritime",
+            "Pré-romane",
+            "Industrielle"
+          ],
+          "answers": [
+            "maritime"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "observation",
+        "purpose": "Le défi lance la mission avec un vrai repérage du port.",
+        "enfant": {
+          "easy": "Trouve un bateau puis 8 pas rapides.",
+          "medium": "Trouve deux bateaux puis 10 pas rapides.",
+          "hard": "Trouve deux bateaux puis 12 pas rapides."
+        },
+        "ado": {
+          "easy": "Trouve un bateau puis 10 pas rapides.",
+          "medium": "Trouve deux bateaux puis 12 pas rapides.",
+          "hard": "Trouve deux bateaux puis 15 pas rapides."
+        },
+        "adulte": {
+          "easy": "Trouve un bateau puis 10 pas rapides.",
+          "medium": "Trouve deux bateaux puis 15 pas rapides.",
+          "hard": "Trouve deux bateaux puis 20 pas rapides."
+        }
+      },
+      "proof": {
+        "type": "none",
+        "label": ""
+      }
+    },
+    {
+      "id": "maillol",
+      "phase": "Culture",
+      "title": "Maillol à Banyuls",
+      "address": "Secteur sculptures / centre",
+      "coords": {
+        "lat": 42.4832,
+        "lng": 3.1277,
+        "radius": 160
+      },
+      "visualHint": "Cherche une sculpture ou un repère lié à Maillol.",
+      "arrivalHint": "Place-toi près d’une œuvre ou d’un repère Maillol.",
+      "discovery": "Le site officiel présente Banyuls comme un “musée à ciel ouvert” et rappelle que Maillol est la grande fierté culturelle de la ville.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Quel artiste est présenté comme la fierté culturelle de Banyuls ?",
+          "options": [
+            "Maillol",
+            "Derain",
+            "Vauban"
+          ],
+          "answers": [
+            "maillol",
+            "aristide maillol"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Comment le site décrit-il la ville sur ce point ?",
+          "options": [
+            "Un musée à ciel ouvert",
+            "Une forteresse flottante",
+            "Une abbaye cachée"
+          ],
+          "answers": [
+            "un musée à ciel ouvert",
+            "musée à ciel ouvert"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel mot résume cette étape ?",
+          "options": [
+            "Sculpture",
+            "Port militaire",
+            "Cloître"
+          ],
+          "answers": [
+            "sculpture"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "photo",
+        "purpose": "Une photo-preuve a du sens pour une étape artistique.",
+        "enfant": {
+          "easy": "Prends une photo de l’œuvre.",
+          "medium": "Photo de l’œuvre + pose statue.",
+          "hard": "Photo de l’œuvre + vraie pose statue."
+        },
+        "ado": {
+          "easy": "Photo de l’œuvre.",
+          "medium": "Photo + pose statue.",
+          "hard": "Photo + pose statue."
+        },
+        "adulte": {
+          "easy": "Photo de l’œuvre.",
+          "medium": "Photo + pose statue.",
+          "hard": "Photo + pose statue."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Prends une photo d’une œuvre ou de votre pose statue."
+      }
+    },
+    {
+      "id": "biodiversarium",
+      "phase": "Science & mer",
+      "title": "Biodiversarium",
+      "address": "Secteur Aquarium / Biodiversarium",
+      "coords": {
+        "lat": 42.4841,
+        "lng": 3.1297,
+        "radius": 140
+      },
+      "visualHint": "Cherche le Biodiversarium ou l’Aquarium.",
+      "arrivalHint": "Place-toi près de l’entrée du site.",
+      "discovery": "Le Biodiversarium réunit Aquarium et Jardin Méditerranéen. Le magazine de destination indique que l’Aquarium présente plus de 300 espèces locales.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Combien d’espèces locales sont présentées à l’aquarium ?",
+          "options": [
+            "Plus de 300",
+            "Environ 30",
+            "Moins de 10"
+          ],
+          "answers": [
+            "plus de 300",
+            "300"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Le Biodiversarium réunit quels deux sites ?",
+          "options": [
+            "Aquarium et Jardin Méditerranéen",
+            "Port et château",
+            "Monastère et cloître"
+          ],
+          "answers": [
+            "aquarium et jardin méditerranéen",
+            "jardin méditerranéen et aquarium"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel type de découverte fais-tu ici ?",
+          "options": [
+            "Marine et scientifique",
+            "Militaire",
+            "Royale"
+          ],
+          "answers": [
+            "marine et scientifique",
+            "scientifique"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "interaction",
+        "purpose": "Défi simple lié à l’observation scientifique.",
+        "enfant": {
+          "easy": "Repère un animal marin sur une affiche ou un panneau.",
+          "medium": "Repère deux animaux marins sur un panneau.",
+          "hard": "Repère deux animaux et cite-en un à l’équipe."
+        },
+        "ado": {
+          "easy": "Repère un animal marin.",
+          "medium": "Repère deux animaux.",
+          "hard": "Repère deux animaux et cite-en un."
+        },
+        "adulte": {
+          "easy": "Repère un animal marin.",
+          "medium": "Repère deux animaux.",
+          "hard": "Repère deux animaux et cite-en un."
+        }
+      },
+      "proof": {
+        "type": "none",
+        "label": ""
+      }
+    },
+    {
+      "id": "plage",
+      "phase": "Nature",
+      "title": "Plage et littoral",
+      "address": "Front de mer de Banyuls",
+      "coords": {
+        "lat": 42.4828,
+        "lng": 3.131,
+        "radius": 180
+      },
+      "visualHint": "Approche de la plage ou du front de mer.",
+      "arrivalHint": "Place-toi là où tu vois clairement la mer.",
+      "discovery": "Le site officiel cite plusieurs plages et criques, dont la plage Centrale, les Elmes et des criques sur le sentier du littoral ; la réserve marine Cerbère-Banyuls est aussi mise en avant.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Quel type de lieux côtiers le site met-il en avant ?",
+          "options": [
+            "Plages et criques",
+            "Canaux et écluses",
+            "Falaises de glace"
+          ],
+          "answers": [
+            "plages et criques"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Quelle réserve est mentionnée ?",
+          "options": [
+            "La Réserve Marine Cerbère-Banyuls",
+            "Le Parc du Néouvielle",
+            "La Camargue"
+          ],
+          "answers": [
+            "la réserve marine cerbère-banyuls",
+            "réserve marine cerbère-banyuls"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel mot convient ici ?",
+          "options": [
+            "Méditerranée",
+            "Abbaye",
+            "Obélisque"
+          ],
+          "answers": [
+            "méditerranée"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "physical",
+        "purpose": "Le bord de mer se prête bien à un mini défi actif.",
+        "enfant": {
+          "easy": "30 s de marche active.",
+          "medium": "40 s de marche active.",
+          "hard": "50 s de marche active."
+        },
+        "ado": {
+          "easy": "40 s de marche active.",
+          "medium": "50 s de marche active.",
+          "hard": "1 min de marche active."
+        },
+        "adulte": {
+          "easy": "40 s de marche active.",
+          "medium": "1 min de marche active.",
+          "hard": "1 min + 6 squats."
+        }
+      },
+      "proof": {
+        "type": "none",
+        "label": ""
+      }
+    },
+    {
+      "id": "vignes",
+      "phase": "Terroir",
+      "title": "Vignes et terroir de Banyuls",
+      "address": "Point avec vue sur les vignes ou évoquant le vignoble",
+      "coords": {
+        "lat": 42.486,
+        "lng": 3.124,
+        "radius": 220
+      },
+      "visualHint": "Cherche un point où l’on comprend le lien entre village et vignoble.",
+      "arrivalHint": "Place-toi près d’un point de vue ou d’un repère parlant du vignoble.",
+      "discovery": "Le site officiel met en avant un vignoble d’exception et le cru Collioure-Banyuls, symbole d’un savoir-faire transmis de génération en génération.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Quel savoir-faire local est mis en avant ici ?",
+          "options": [
+            "Le vignoble et le vin",
+            "La sidérurgie",
+            "Le verre soufflé"
+          ],
+          "answers": [
+            "le vignoble et le vin",
+            "vignoble et le vin"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Quel cru est cité dans les supports touristiques ?",
+          "options": [
+            "Collioure-Banyuls",
+            "Champagne-Ardenne",
+            "Muscadet-Loire"
+          ],
+          "answers": [
+            "collioure-banyuls"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel mot final résume Banyuls ?",
+          "options": [
+            "Mer et vignes",
+            "Port et obélisque",
+            "Roman et cloître"
+          ],
+          "answers": [
+            "mer et vignes"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "photo",
+        "purpose": "Final idéal pour un bonus photo avec vue.",
+        "enfant": {
+          "easy": "Photo de la vue ou des vignes.",
+          "medium": "Photo de la vue + équipe.",
+          "hard": "Photo de la vue + geste Explor’Action."
+        },
+        "ado": {
+          "easy": "Photo de la vue ou des vignes.",
+          "medium": "Photo de la vue + équipe.",
+          "hard": "Photo vue + geste Explor’Action."
+        },
+        "adulte": {
+          "easy": "Photo de la vue ou des vignes.",
+          "medium": "Photo vue + équipe.",
+          "hard": "Photo vue + geste Explor’Action."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Prends une photo finale de la vue ou des vignes."
+      }
+    }
+  ]
+}

@@ -1,0 +1,453 @@
+{
+  "id": "collioure-art",
+  "village": "Collioure",
+  "title": "Collioure art & histoire",
+  "subtitle": "Fauvisme, château et clocher",
+  "description": "Un parcours ludique entre patrimoine, bord de mer et création.",
+  "distanceKm": "2,2 à 3,2 km",
+  "stepsCount": 5,
+  "timing": {
+    "enfant": {
+      "easy": [
+        30,
+        40
+      ],
+      "medium": [
+        40,
+        55
+      ],
+      "hard": [
+        55,
+        70
+      ]
+    },
+    "ado": {
+      "easy": [
+        35,
+        45
+      ],
+      "medium": [
+        45,
+        60
+      ],
+      "hard": [
+        60,
+        75
+      ]
+    },
+    "adulte": {
+      "easy": [
+        40,
+        50
+      ],
+      "medium": [
+        50,
+        65
+      ],
+      "hard": [
+        65,
+        80
+      ]
+    }
+  },
+  "scoreRules": {
+    "answer": 20,
+    "firstTryBonus": 10,
+    "gpsBonus": 10,
+    "challengeBonus": 15,
+    "photoBonus": 10,
+    "teamBonus": 5,
+    "timeBonusFast": 30,
+    "timeBonusMid": 15
+  },
+  "steps": [
+    {
+      "id": "vitrine-fauvisme",
+      "phase": "Départ",
+      "title": "Vitrine sur le Fauvisme",
+      "address": "Centre de Collioure",
+      "coords": {
+        "lat": 42.5265,
+        "lng": 3.0838,
+        "radius": 120
+      },
+      "visualHint": "Cherche la Vitrine sur le Fauvisme.",
+      "arrivalHint": "Place-toi devant la vitrine ou le lieu dédié au Fauvisme.",
+      "discovery": "L’office de tourisme décrit la Vitrine sur le Fauvisme comme une fenêtre ouverte sur l’histoire culturelle et artistique de Collioure.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "À quoi est consacré ce lieu ?",
+          "options": [
+            "Au Fauvisme",
+            "À la construction navale",
+            "À l’aquarium"
+          ],
+          "answers": [
+            "au fauvisme",
+            "fauvisme"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Quel courant artistique est mis en avant ?",
+          "options": [
+            "Le Fauvisme",
+            "Le cubisme",
+            "Le roman"
+          ],
+          "answers": [
+            "le fauvisme",
+            "fauvisme"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Ce lieu est présenté comme…",
+          "options": [
+            "Une fenêtre ouverte sur l’histoire culturelle de Collioure",
+            "Une caserne militaire",
+            "Un marché aux poissons"
+          ],
+          "answers": [
+            "une fenêtre ouverte sur l’histoire culturelle de collioure",
+            "fenêtre ouverte sur l’histoire culturelle de collioure"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "creative",
+        "purpose": "Premier défi créatif pour entrer dans l’ambiance du parcours.",
+        "enfant": {
+          "easy": "Choisis une couleur vive et montre-la du doigt.",
+          "medium": "Mime un peintre pendant 10 s.",
+          "hard": "Mime un peintre et tiens la pose 15 s."
+        },
+        "ado": {
+          "easy": "Mime un peintre 10 s.",
+          "medium": "Mime un peintre 15 s.",
+          "hard": "Mime un peintre 20 s."
+        },
+        "adulte": {
+          "easy": "Mime un peintre 10 s.",
+          "medium": "Mime un peintre 15 s.",
+          "hard": "Mime un peintre 20 s."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Prends une photo d’une couleur ou d’une œuvre reproduite."
+      }
+    },
+    {
+      "id": "eglise-anges",
+      "phase": "Patrimoine",
+      "title": "Église Notre-Dame-des-Anges",
+      "address": "Bord de mer, Collioure",
+      "coords": {
+        "lat": 42.5254,
+        "lng": 3.0853,
+        "radius": 120
+      },
+      "visualHint": "Repère le clocher emblématique au bord de l’eau.",
+      "arrivalHint": "Place-toi face à l’église et au clocher.",
+      "discovery": "L’église Notre-Dame-des-Anges est le monument emblématique de Collioure ; son clocher fut autrefois un phare.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Qu’était autrefois le clocher ?",
+          "options": [
+            "Un phare",
+            "Une grue de port",
+            "Un moulin"
+          ],
+          "answers": [
+            "un phare",
+            "phare"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Quel monument emblématique vois-tu ici ?",
+          "options": [
+            "L’église Notre-Dame-des-Anges",
+            "Le Biodiversarium",
+            "La Casa de l’Albera"
+          ],
+          "answers": [
+            "l’église notre-dame-des-anges",
+            "notre-dame-des-anges"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Où se trouve ce monument ?",
+          "options": [
+            "Au bord de l’eau",
+            "Au sommet d’un col",
+            "Dans une forêt"
+          ],
+          "answers": [
+            "au bord de l’eau",
+            "bord de l’eau"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "observation",
+        "purpose": "Le défi force à lever les yeux et à regarder le lieu.",
+        "enfant": {
+          "easy": "Repère le clocher puis 6 sauts sur place.",
+          "medium": "Repère le clocher puis 8 sauts.",
+          "hard": "Repère le clocher puis 10 sauts."
+        },
+        "ado": {
+          "easy": "Repère le clocher puis 8 sauts.",
+          "medium": "Repère le clocher puis 10 sauts.",
+          "hard": "Repère le clocher puis 12 sauts."
+        },
+        "adulte": {
+          "easy": "Repère le clocher puis 8 sauts.",
+          "medium": "Repère le clocher puis 10 sauts.",
+          "hard": "Repère le clocher puis 15 sauts."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Prends une photo du clocher ou de l’église."
+      }
+    },
+    {
+      "id": "chateau-royal",
+      "phase": "Histoire",
+      "title": "Château Royal",
+      "address": "Quai central, Collioure",
+      "coords": {
+        "lat": 42.5259,
+        "lng": 3.0832,
+        "radius": 120
+      },
+      "visualHint": "Approche-toi du grand château plongé dans la mer.",
+      "arrivalHint": "Place-toi dans le secteur du Château Royal.",
+      "discovery": "Le château royal est décrit comme un monument plongé dans la Méditerranée, pièce maîtresse du dispositif défensif. Il est devenu monument historique en 1922.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "En quelle année est-il devenu monument historique ?",
+          "options": [
+            "1922",
+            "1822",
+            "2022"
+          ],
+          "answers": [
+            "1922"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Quel rôle jouait le château ?",
+          "options": [
+            "Pièce maîtresse du dispositif défensif",
+            "Aquarium pédagogique",
+            "Moulin à huile"
+          ],
+          "answers": [
+            "pièce maîtresse du dispositif défensif",
+            "dispositif défensif"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Où semblent plonger ses fondations ?",
+          "options": [
+            "Dans la Méditerranée",
+            "Dans une rivière de montagne",
+            "Dans un champ de vignes"
+          ],
+          "answers": [
+            "dans la méditerranée",
+            "méditerranée"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "physical",
+        "purpose": "Le défi ajoute une pointe d’action face au château.",
+        "enfant": {
+          "easy": "20 s de marche active.",
+          "medium": "30 s de marche active.",
+          "hard": "40 s de marche active + 5 squats."
+        },
+        "ado": {
+          "easy": "30 s de marche active.",
+          "medium": "40 s de marche active.",
+          "hard": "50 s de marche active + 5 squats."
+        },
+        "adulte": {
+          "easy": "30 s de marche active.",
+          "medium": "50 s de marche active.",
+          "hard": "1 min de marche active + 5 squats."
+        }
+      },
+      "proof": {
+        "type": "none",
+        "label": ""
+      }
+    },
+    {
+      "id": "moure-port-avall",
+      "phase": "Ambiance",
+      "title": "Le Mouré et le Port d’Avall",
+      "address": "Ruelles et front de mer de Collioure",
+      "coords": {
+        "lat": 42.5251,
+        "lng": 3.0865,
+        "radius": 150
+      },
+      "visualHint": "Explore les ruelles ou le quartier du Mouré / Port d’Avall.",
+      "arrivalHint": "Quand tu vois ruelles, mer et façades colorées, tu es au bon endroit.",
+      "discovery": "L’office de tourisme conseille de flâner dans les ruelles du Mouré et du Port d’Avall, au milieu des reproductions liées au chemin du Fauvisme.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Dans quel quartier recommande-t-on de flâner ?",
+          "options": [
+            "Le Mouré",
+            "La place Castellane",
+            "Le bois des pins"
+          ],
+          "answers": [
+            "le mouré",
+            "mouré"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Quelle ambiance domine ici ?",
+          "options": [
+            "Ruelles, mer et couleurs",
+            "Port industriel lourd",
+            "Village de neige"
+          ],
+          "answers": [
+            "ruelles, mer et couleurs",
+            "mer et couleurs"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel type de parcours artistique traverse le village ?",
+          "options": [
+            "Le chemin du Fauvisme",
+            "Le sentier sous-marin",
+            "Le parcours des moulins"
+          ],
+          "answers": [
+            "le chemin du fauvisme",
+            "chemin du fauvisme"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "photo",
+        "purpose": "Un défi photo a du sens dans le village des artistes.",
+        "enfant": {
+          "easy": "Prends une photo colorée.",
+          "medium": "Prends une photo colorée + une pose d’artiste.",
+          "hard": "Prends une photo colorée + une vraie pose d’artiste."
+        },
+        "ado": {
+          "easy": "Photo colorée.",
+          "medium": "Photo colorée + pose d’artiste.",
+          "hard": "Photo colorée + pose d’artiste."
+        },
+        "adulte": {
+          "easy": "Photo colorée.",
+          "medium": "Photo colorée + pose d’artiste.",
+          "hard": "Photo colorée + pose d’artiste."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Photo d’une façade colorée ou de l’équipe en mode artiste."
+      }
+    },
+    {
+      "id": "final-collioure",
+      "phase": "Final",
+      "title": "Final de Collioure",
+      "address": "Retour vers le front de mer",
+      "coords": {
+        "lat": 42.5256,
+        "lng": 3.0846,
+        "radius": 140
+      },
+      "visualHint": "Reviens vers le centre pour boucler le parcours.",
+      "arrivalHint": "Place-toi dans un secteur où tu vois mer et monuments emblématiques.",
+      "discovery": "Collioure est présentée comme une ville d’art et de culture, ancien port royal, avec un clocher emblématique et une lumière qui a inspiré Matisse et Derain.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Quels peintres sont souvent associés à Collioure ?",
+          "options": [
+            "Matisse et Derain",
+            "Monet et Renoir",
+            "Picasso et Braque"
+          ],
+          "answers": [
+            "matisse et derain"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Quel type de ville est Collioure ?",
+          "options": [
+            "Ville d’art et de culture",
+            "Station de ski",
+            "Capitale industrielle"
+          ],
+          "answers": [
+            "ville d’art et de culture",
+            "art et culture"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel mot résume le mieux Collioure ?",
+          "options": [
+            "Couleurs",
+            "Mine",
+            "Obélisque"
+          ],
+          "answers": [
+            "couleurs",
+            "couleur"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "creative",
+        "purpose": "Final ludique dans une ambiance artistique.",
+        "enfant": {
+          "easy": "Fais une pose d’artiste 10 s.",
+          "medium": "Pose d’artiste 15 s.",
+          "hard": "Pose d’artiste 20 s."
+        },
+        "ado": {
+          "easy": "Pose d’artiste 15 s.",
+          "medium": "Pose d’artiste 20 s.",
+          "hard": "Pose d’artiste 25 s."
+        },
+        "adulte": {
+          "easy": "Pose d’artiste 15 s.",
+          "medium": "Pose d’artiste 20 s.",
+          "hard": "Pose d’artiste 25 s."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Photo finale de l’équipe en pose d’artiste."
+      }
+    }
+  ]
+}

@@ -1,0 +1,450 @@
+{
+  "id": "port-vendres-maritime",
+  "village": "Port-Vendres",
+  "title": "Port-Vendres maritime",
+  "subtitle": "Port, obélisque et mémoire des quais",
+  "description": "Un parcours précis et très visuel autour du port et de son patrimoine.",
+  "distanceKm": "2 à 3 km",
+  "stepsCount": 5,
+  "timing": {
+    "enfant": {
+      "easy": [
+        30,
+        40
+      ],
+      "medium": [
+        40,
+        55
+      ],
+      "hard": [
+        55,
+        70
+      ]
+    },
+    "ado": {
+      "easy": [
+        35,
+        45
+      ],
+      "medium": [
+        45,
+        60
+      ],
+      "hard": [
+        60,
+        75
+      ]
+    },
+    "adulte": {
+      "easy": [
+        40,
+        50
+      ],
+      "medium": [
+        50,
+        65
+      ],
+      "hard": [
+        65,
+        80
+      ]
+    }
+  },
+  "scoreRules": {
+    "answer": 20,
+    "firstTryBonus": 10,
+    "gpsBonus": 10,
+    "challengeBonus": 15,
+    "photoBonus": 10,
+    "teamBonus": 5,
+    "timeBonusFast": 30,
+    "timeBonusMid": 15
+  },
+  "steps": [
+    {
+      "id": "quais-port",
+      "phase": "Départ",
+      "title": "Quais du port",
+      "address": "Centre de Port-Vendres",
+      "coords": {
+        "lat": 42.5181,
+        "lng": 3.1056,
+        "radius": 140
+      },
+      "visualHint": "Cherche les quais du port.",
+      "arrivalHint": "Place-toi au bord du port.",
+      "discovery": "Le site officiel présente Port-Vendres comme le seul port en eau profonde du département, à la fois port de plaisance, de pêche et de commerce.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Port-Vendres est présenté comme…",
+          "options": [
+            "Le seul port en eau profonde du département",
+            "Un simple étang intérieur",
+            "Un lac de montagne"
+          ],
+          "answers": [
+            "le seul port en eau profonde du département",
+            "seul port en eau profonde du département"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Quelles activités du port sont citées ?",
+          "options": [
+            "Plaisance, pêche et commerce",
+            "Ski, luge et biathlon",
+            "Verrerie et poterie"
+          ],
+          "answers": [
+            "plaisance, pêche et commerce"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel mot résume le village ?",
+          "options": [
+            "Maritime",
+            "Roman",
+            "Fauve"
+          ],
+          "answers": [
+            "maritime"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "observation",
+        "purpose": "Le défi aide à observer les quais et les bateaux.",
+        "enfant": {
+          "easy": "Trouve un bateau puis 8 montées de genoux.",
+          "medium": "Trouve deux bateaux différents puis 10 montées de genoux.",
+          "hard": "Trouve deux bateaux différents puis 12 montées de genoux."
+        },
+        "ado": {
+          "easy": "Trouve un bateau puis 10 montées de genoux.",
+          "medium": "Trouve deux bateaux puis 12 montées de genoux.",
+          "hard": "Trouve deux bateaux puis 15 montées de genoux."
+        },
+        "adulte": {
+          "easy": "Trouve un bateau puis 10 montées de genoux.",
+          "medium": "Trouve deux bateaux puis 15 montées de genoux.",
+          "hard": "Trouve deux bateaux puis 20 montées de genoux."
+        }
+      },
+      "proof": {
+        "type": "none",
+        "label": ""
+      }
+    },
+    {
+      "id": "obelisque",
+      "phase": "Patrimoine",
+      "title": "Obélisque",
+      "address": "Place de l’Obélisque, Port-Vendres",
+      "coords": {
+        "lat": 42.5187,
+        "lng": 3.1048,
+        "radius": 120
+      },
+      "visualHint": "Cherche l’obélisque emblématique de la ville.",
+      "arrivalHint": "Place-toi devant l’obélisque.",
+      "discovery": "L’Obélisque est le monument le plus emblématique de la ville ; il est dédié à Louis XVI de son vivant et se situe à 30 mètres au-dessus du niveau de la mer.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "À qui l’obélisque est-il dédié ?",
+          "options": [
+            "Louis XVI",
+            "Napoléon Ier",
+            "Vauban"
+          ],
+          "answers": [
+            "louis xvi"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "À quelle hauteur au-dessus de la mer est-il placé ?",
+          "options": [
+            "30 mètres",
+            "3 mètres",
+            "130 mètres"
+          ],
+          "answers": [
+            "30 mètres",
+            "30 m",
+            "30"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel élément se trouve au sommet ?",
+          "options": [
+            "Un globe terrestre et une fleur de lys",
+            "Une cloche",
+            "Une ancre"
+          ],
+          "answers": [
+            "un globe terrestre et une fleur de lys",
+            "globe terrestre et une fleur de lys"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "photo",
+        "purpose": "Le monument mérite une vraie preuve visuelle.",
+        "enfant": {
+          "easy": "Prends une photo de l’obélisque.",
+          "medium": "Photo de l’obélisque + l’équipe.",
+          "hard": "Photo de l’obélisque + pose de victoire."
+        },
+        "ado": {
+          "easy": "Photo de l’obélisque.",
+          "medium": "Photo de l’obélisque + équipe.",
+          "hard": "Photo + pose de victoire."
+        },
+        "adulte": {
+          "easy": "Photo de l’obélisque.",
+          "medium": "Photo + équipe.",
+          "hard": "Photo + pose de victoire."
+        }
+      },
+      "proof": {
+        "type": "photo",
+        "label": "Photo de l’obélisque ou de l’équipe devant le monument."
+      }
+    },
+    {
+      "id": "dome",
+      "phase": "Histoire",
+      "title": "Le Dôme",
+      "address": "Secteur de la place de l’Obélisque",
+      "coords": {
+        "lat": 42.5188,
+        "lng": 3.1046,
+        "radius": 130
+      },
+      "visualHint": "Reste dans le prolongement de la place de l’Obélisque.",
+      "arrivalHint": "Approche du Dôme dans le même secteur.",
+      "discovery": "Le Dôme est un vestige de la caserne du Fer à Cheval construite dans le prolongement de la place de l’Obélisque.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Le Dôme est lié à quel ensemble ?",
+          "options": [
+            "La caserne du Fer à Cheval",
+            "Le sentier sous-marin",
+            "Le cloître roman"
+          ],
+          "answers": [
+            "la caserne du fer à cheval",
+            "caserne du fer à cheval"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Où se trouve-t-il ?",
+          "options": [
+            "Dans le prolongement de la place de l’Obélisque",
+            "Sur la plage",
+            "Au sommet d’une colline lointaine"
+          ],
+          "answers": [
+            "dans le prolongement de la place de l’obélisque",
+            "prolongement de la place de l’obélisque"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel mot décrit ce lieu ?",
+          "options": [
+            "Vestige",
+            "Phare",
+            "Aquarium"
+          ],
+          "answers": [
+            "vestige"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "creative",
+        "purpose": "Petit défi pour relancer l’attention.",
+        "enfant": {
+          "easy": "Fais une posture ronde 10 s.",
+          "medium": "Posture ronde 15 s.",
+          "hard": "Posture ronde 20 s."
+        },
+        "ado": {
+          "easy": "Posture ronde 15 s.",
+          "medium": "Posture ronde 20 s.",
+          "hard": "Posture ronde 25 s."
+        },
+        "adulte": {
+          "easy": "Posture ronde 15 s.",
+          "medium": "Posture ronde 20 s.",
+          "hard": "Posture ronde 25 s."
+        }
+      },
+      "proof": {
+        "type": "none",
+        "label": ""
+      }
+    },
+    {
+      "id": "victoire-maillol",
+      "phase": "Art",
+      "title": "Statue de la Victoire",
+      "address": "Au-dessus du monument aux morts",
+      "coords": {
+        "lat": 42.519,
+        "lng": 3.1041,
+        "radius": 150
+      },
+      "visualHint": "Cherche la statue appelée “Victoire”.",
+      "arrivalHint": "Place-toi devant la statue ou le monument.",
+      "discovery": "La statue de la Victoire est une œuvre d’Aristide Maillol commandée par la ville en 1922 ; elle représente une femme allongée tenant des branches d’olivier.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Qui a réalisé la statue de la Victoire ?",
+          "options": [
+            "Aristide Maillol",
+            "Henri Matisse",
+            "André Derain"
+          ],
+          "answers": [
+            "aristide maillol"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "En quelle année a-t-elle été commandée ?",
+          "options": [
+            "1922",
+            "1780",
+            "2003"
+          ],
+          "answers": [
+            "1922"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Que tient la figure dans sa main droite ?",
+          "options": [
+            "Des branches d’olivier",
+            "Une ancre",
+            "Un pinceau"
+          ],
+          "answers": [
+            "des branches d’olivier",
+            "branches d’olivier"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "team",
+        "purpose": "L’équipe peut valider ensemble ce défi d’observation.",
+        "enfant": {
+          "easy": "Montre la statue à un coéquipier.",
+          "medium": "Montre la statue et fais 6 squats.",
+          "hard": "Montre la statue et fais 8 squats."
+        },
+        "ado": {
+          "easy": "Montre la statue puis 6 squats.",
+          "medium": "Montre la statue puis 8 squats.",
+          "hard": "Montre la statue puis 10 squats."
+        },
+        "adulte": {
+          "easy": "Montre la statue puis 6 squats.",
+          "medium": "Montre la statue puis 10 squats.",
+          "hard": "Montre la statue puis 12 squats."
+        }
+      },
+      "proof": {
+        "type": "team",
+        "label": "Validation avec l’équipe ou l’animateur"
+      }
+    },
+    {
+      "id": "final-port",
+      "phase": "Final",
+      "title": "Final des quais",
+      "address": "Retour vers le port",
+      "coords": {
+        "lat": 42.5181,
+        "lng": 3.1056,
+        "radius": 140
+      },
+      "visualHint": "Reviens vers les quais pour terminer.",
+      "arrivalHint": "Place-toi là où l’activité du port se voit bien.",
+      "discovery": "Port-Vendres est présenté comme une ville à l’histoire maritime illustre, de l’Antiquité à nos jours.",
+      "question": {
+        "easy": {
+          "type": "mcq",
+          "prompt": "Quelle grande histoire est mise en avant ici ?",
+          "options": [
+            "Une histoire maritime",
+            "Une histoire du fauvisme",
+            "Une histoire des abbayes romanes"
+          ],
+          "answers": [
+            "une histoire maritime",
+            "histoire maritime"
+          ]
+        },
+        "medium": {
+          "type": "mcq",
+          "prompt": "Le port est au cœur de…",
+          "options": [
+            "La ville",
+            "La montagne",
+            "Une forêt"
+          ],
+          "answers": [
+            "la ville",
+            "ville"
+          ]
+        },
+        "hard": {
+          "type": "mcq",
+          "prompt": "Quel mot final convient le mieux ?",
+          "options": [
+            "Quais",
+            "Vignes",
+            "Cloître"
+          ],
+          "answers": [
+            "quais",
+            "quai"
+          ]
+        }
+      },
+      "challenge": {
+        "type": "physical",
+        "purpose": "Final rapide pour clôturer la mission.",
+        "enfant": {
+          "easy": "30 s de marche rapide le long du quai.",
+          "medium": "40 s de marche rapide.",
+          "hard": "50 s de marche rapide."
+        },
+        "ado": {
+          "easy": "40 s de marche rapide.",
+          "medium": "50 s de marche rapide.",
+          "hard": "1 min de marche rapide."
+        },
+        "adulte": {
+          "easy": "40 s de marche rapide.",
+          "medium": "1 min de marche rapide.",
+          "hard": "1 min + 6 squats."
+        }
+      },
+      "proof": {
+        "type": "none",
+        "label": ""
+      }
+    }
+  ]
+}
