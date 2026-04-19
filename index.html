@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Explor’Action V7.1</title>
+  <meta name="theme-color" content="#0a0d12">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header id="topbar" class="topbar hidden">
+      <button id="backBtn" class="icon-btn" aria-label="Retour">←</button>
+      <div class="brand-inline">
+        <img src="assets/logo_clean.png" alt="FAFATRAINING" class="brand-inline-logo">
+        <div>
+          <div class="eyebrow" id="tbVillage">Explor’Action</div>
+          <div class="tb-title" id="tbTitle">Mission</div>
+        </div>
+      </div>
+      <div class="topbar-stats">
+        <div class="stat-pill">⏱️ <span id="chrono">00:00</span></div>
+        <div class="stat-pill">⭐ <span id="scoreTop">0</span></div>
+        <div class="stat-pill">💡 <span id="hintsTop">0</span></div>
+      </div>
+    </header>
+    <main id="root"></main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="data/villages.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
