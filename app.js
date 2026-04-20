@@ -574,3 +574,62 @@ function renderRankingScreen(){
 function escapeHtml(s=''){ return String(s).replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
 
 renderHome();
+
+/* ==== V7.3 Gameplay/Nav ==== */
+function applyLevel(level, baseSteps){
+  if(!baseSteps) return [];
+  if(level==="decouverte") return baseSteps.slice(0,4);
+  if(level==="explorateur") return baseSteps.slice(0,6);
+  if(level==="expert") return baseSteps.slice(0,8);
+  return baseSteps;
+}
+function computeTime(distanceKm, steps){ return Math.round(distanceKm*20 + steps*5); }
+
+function getDistance(lat1, lon1, lat2, lon2){
+  const R=6371;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function getDirection(user, target){
+  const dLon = target.lng - user.lng;
+  const y = Math.sin(dLon) * Math.cos(target.lat);
+  const x = Math.cos(user.lat)*Math.sin(target.lat) - Math.sin(user.lat)*Math.cos(target.lat)*Math.cos(dLon);
+  let brng = Math.atan2(y, x);
+  return (brng * 180 / Math.PI + 360) % 360;
+}
+function updateGuidance(user, target){
+  const el=document.getElementById("guidance");
+  if(!el||!target) return;
+  const dist = getDistance(user.lat,user.lng,target.lat,target.lng);
+  const dir = getDirection(user,target);
+  el.innerHTML = `📍 ${Math.round(dist*1000)} m<br>➡️ ${Math.round(dir)}°`;
+}
+
+// GPS watcher
+let __userPos = null;
+if(navigator.geolocation){
+  navigator.geolocation.watchPosition(p=>{
+    __userPos = {lat:p.coords.latitude, lng:p.coords.longitude};
+    if(window.currentTarget) updateGuidance(__userPos, window.currentTarget);
+  });
+}
+
+// Audio (TTS)
+function narrate(text){
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 1; u.pitch = 1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+// Success renderer
+function showSuccess(step){
+  return `<div class="success">✅ Bonne réponse<br><br>${step.culture||""}<br><br>🎁 +20 points</div>`;
+}
+
+// Validation alternatives
+function validateObservation(answer, expected){ return String(answer).trim().toLowerCase()===String(expected).toLowerCase(); }
+function validateCodeSpot(input, expected){ return String(input).trim()===String(expected).trim(); }

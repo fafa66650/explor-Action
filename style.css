@@ -124,3 +124,10 @@ button,input,select,textarea{font:inherit}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (max-width:1120px){.hero-grid,.setup-grid,.mission-layout,.top-mission,.end-grid{grid-template-columns:1fr}.sidebar{position:static}.hero::before{background-size:220px auto}}
 @media (max-width:720px){#app{padding:12px}.topbar{padding:10px 12px}.hero{padding:24px}.hero h1{font-size:2.5rem}.section,.panel,.stage,.sidebar,.hero-mini{padding:18px}.village-grid{grid-template-columns:1fr}.choice-grid{grid-template-columns:1fr}.summary-live,.metric-grid{grid-template-columns:1fr}.topbar-stats{display:none}}
+
+/* ==== V7.3 UI ==== */
+body{background:#0F1115;color:#F2F4F8}
+.card{background:#1A1F2B;border-radius:14px;padding:16px;margin:12px 0}
+.btn{background:#B7FF00;color:#000;font-weight:800;padding:14px 18px;border-radius:12px;border:none}
+.success{color:#B7FF00;font-weight:800}
+.logo-bg{position:absolute;width:70%;opacity:.06;filter:blur(6px);top:18%;left:15%;pointer-events:none}
