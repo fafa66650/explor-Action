@@ -2,9 +2,12 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Explor’Action V7.1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Explor’Action V7.3 Full Immersion</title>
   <meta name="theme-color" content="#0a0d12">
+  <meta name="description" content="Explor’Action by FAFATRAINING — missions immersives village par village avec audio, mini-carte live, adaptation dynamique de difficulté et mode multi-équipes.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/logo_clean.png">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="style.css">
@@ -24,6 +27,7 @@
         <div class="stat-pill">⏱️ <span id="chrono">00:00</span></div>
         <div class="stat-pill">⭐ <span id="scoreTop">0</span></div>
         <div class="stat-pill">💡 <span id="hintsTop">0</span></div>
+        <div class="stat-pill">🎯 <span id="aiTop">Adaptif</span></div>
       </div>
     </header>
     <main id="root"></main>
@@ -32,8 +36,5 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="data/villages.js"></script>
   <script src="app.js"></script>
-
-<div id="guidance" style="position:fixed;bottom:16px;right:16px;background:#000a;color:#fff;padding:10px 12px;border-radius:10px;font-weight:600"></div>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<div id="map" style="height:260px;margin:10px"></div></body>
+</body>
 </html>

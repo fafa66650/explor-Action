@@ -1,20 +1,22 @@
-# Explor’Action V6.2
+# Explor’Action V7.3 Full Immersion
 
-Base GitHub Pages du projet Explor’Action.
+Base refondue à partir de la V7.2.1 pour une version plus immersive et plus lisible sur mobile.
 
-## Fichiers
-- `index.html`
-- `style.css`
-- `app.js`
-- `data/villages.js`
-- `assets/logo.jpg`
+## Inclus
+- accueil premium avec logo FAFATRAINING visible
+- 7 villages jouables affichés dès l’accueil
+- cartes de villages supplémentaires prêtes pour extension
+- mode solo, équipe et multi-équipes
+- audio guide via synthèse vocale du navigateur
+- mini-carte live avec géolocalisation utilisateur
+- adaptation dynamique de difficulté
+- classement local et badges
+- PWA simple avec manifest + service worker
 
-## Mise en ligne GitHub Pages
-1. Dézippez le dossier.
-2. Envoyez **tout le contenu** à la racine d’un dépôt GitHub.
-3. Activez GitHub Pages sur la branche principale.
+## Important
+La mini-carte live suit la position réelle du joueur.
+Les balises d’étapes sont actuellement générées autour du centre de chaque village pour fournir une structure de jeu prête à enrichir.
+Pour une précision terrain totale, il faut ensuite remplacer ces balises par les coordonnées GPS exactes de chaque POI.
 
-## Notes
-- La carte interactive utilise Leaflet + OpenStreetMap : une connexion internet est nécessaire pour charger les tuiles.
-- Les classements et progressions sont enregistrés en local dans le navigateur.
-- Cette version privilégie la robustesse sur GitHub Pages : pas de backend, pas d’upload photo, pas d’IA image.
+## Déploiement GitHub Pages
+Publier le contenu du zip à la racine du dépôt GitHub Pages.
