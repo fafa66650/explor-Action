@@ -5,7 +5,7 @@ const ASSETS = [
   './style.css',
   './app.js',
   './data/villages.js',
-  './assets/logo_clean.png',
+  './assets/logo_ft.png',
   './assets/logo.jpg',
   './manifest.webmanifest'
 ];
