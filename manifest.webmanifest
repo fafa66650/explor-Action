@@ -1,0 +1,16 @@
+{
+  "name": "Explor’Action",
+  "short_name": "ExplorAction",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#090c12",
+  "theme_color": "#0a0d12",
+  "icons": [
+    {
+      "src": "assets/logo_ft.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

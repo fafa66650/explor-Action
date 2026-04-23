@@ -199,3 +199,6 @@ button,input,select,textarea{font:inherit}
   .choice-grid{grid-template-columns:1fr}
   .impact-grid,.summary-live,.metric-grid{grid-template-columns:1fr 1fr}
 }
+
+
+.helper-text{margin-top:8px;color:var(--muted);font-size:.92rem;line-height:1.4}
