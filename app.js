@@ -394,57 +394,53 @@ function futureVillageCard(v){
 function renderHome(){
   const playableCount = Object.keys(DATA).length;
   root.innerHTML = `
-    <section class="hero fade-in">
-      <div class="hero-topline">FAFATRAINING · jeu d’exploration terrain</div>
-      <div class="hero-header">
-        <div>
-          <h1>Explor’Action</h1>
-          <p class="hero-lead">Choisis ton village, ton public, ton niveau et ton style de mission. Une aventure terrain plus vivante, avec variantes enfant, ado et adulte, boucles plus longues pour adultes et missions complètes sur chaque village.</p>
-          <div class="hero-actions compact-actions">
-            <button class="primary" id="playNow">Choisir un village</button>
-            <button class="secondary subtle" id="showRank">Classements</button>
-          </div>
+    <section class="game-home fade-in">
+      <div class="home-copy">
+        <div class="game-kicker">FAFATRAINING · Aventure terrain</div>
+        <h1>Explor’Action</h1>
+        <p class="game-lead">Un jeu d’exploration grandeur nature : choisis un village, ton public, ton niveau, puis pars résoudre les énigmes sur le terrain.</p>
+        <div class="start-panel">
+          <div class="start-step"><span>1</span><strong>Choisis ton village</strong><small>Départ libre selon la mission</small></div>
+          <div class="start-step"><span>2</span><strong>Choisis ton public</strong><small>Enfant, ado ou adulte</small></div>
+          <div class="start-step"><span>3</span><strong>Lance l’aventure</strong><small>Audio, carte et IA inclus</small></div>
         </div>
-        <div class="hero-badge-card">
-          <img class="hero-logo-big" src="assets/logo_ft.png" alt="Logo FAFATRAINING">
-          <div class="hero-badge-list">
-            <span class="mini-pill">${playableCount} villages jouables</span>
-            <span class="mini-pill">Audio guide</span>
-            <span class="mini-pill">Mini‑carte live</span>
-            <span class="mini-pill">IA difficulté</span>
-          </div>
+        <div class="hero-actions compact-actions">
+          <button class="primary play-xl" id="playNow">🎮 Jouer maintenant</button>
+          <button class="secondary subtle" id="showRank">🏆 Classements</button>
         </div>
       </div>
-      <div class="hero-selector-wrap">
-        <div class="selector-title">Choix rapide des villages</div>
-        ${villageSelector(state.villageKey)}
+      <div class="home-logo-card">
+        <img class="hero-logo-big clean-logo" src="assets/logo_ft.png" alt="Logo FAFATRAINING">
+        <div class="feature-cloud">
+          <span>🌍 ${playableCount} villages</span>
+          <span>🔊 audio</span>
+          <span>🗺️ carte live</span>
+          <span>🧠 IA</span>
+        </div>
       </div>
     </section>
 
-    <section class="section fade-in">
+    <section class="section fade-in choose-section">
       <div class="section-head compact-head">
-        <div><div class="eyebrow">Tous les villages</div><h2>Choisis ton point de départ</h2></div>
-        <p>Les cartes utiles restent visibles. Le reste est plus discret pour ne pas polluer la lecture.</p>
+        <div><div class="eyebrow">Étape 1</div><h2>Choisis ton village</h2></div>
+        <p>Fais défiler les cartes, clique sur une mission, puis règle ton public et ton niveau. Les détails techniques restent visibles seulement quand ils servent.</p>
       </div>
-      <div class="village-grid">
+      <div class="village-rail">
         ${Object.entries(DATA).map(([k,v])=>villageCard(k,v)).join('')}
-        
       </div>
     </section>
 
-    <section class="section fade-in">
-      <div class="section-head compact-head">
-        <div><div class="eyebrow">Vue d’ensemble</div><h2>Carte des zones de jeu</h2></div>
-        <p>Chaque village est sélectionnable. La mini‑carte live de mission se déclenche ensuite pendant la partie.</p>
-      </div>
-      <div id="homeMap" class="map"></div>
+    <section class="section fade-in compact-map-section">
+      <details class="advanced-details">
+        <summary>🗺️ Voir la carte des zones de jeu</summary>
+        <div id="homeMap" class="map"></div>
+      </details>
     </section>`;
   updateTopbar(false);
-  bindVillageSelection(true);
-  $('#playNow').onclick = ()=> renderSetup(state.villageKey);
+  $('#playNow').onclick = ()=> document.querySelector('.choose-section')?.scrollIntoView({behavior:'smooth'});
   $('#showRank').onclick = renderRankingScreen;
   $$('.card[data-village]').forEach(card => card.onclick = ()=> { state.villageKey = card.dataset.village; renderSetup(state.villageKey); });
-  drawHomeMap();
+  setTimeout(()=>{ if($('#homeMap')) drawHomeMap(); }, 50);
   if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 }
 
@@ -477,81 +473,75 @@ function renderSetup(key){
   const meta = currentMeta();
   const summary = routeSummary();
   root.innerHTML = `
-    <section class="section fade-in hero-setup-shell">
-      <div class="setup-top-row">
-        <div>
-          <div class="eyebrow">Préparer la mission</div>
-          <h2 class="setup-title-main">${village.name}</h2>
-          <p class="setup-intro">${village.hero}</p>
+    <section class="mission-setup-v75 fade-in" style="--accent-local:${meta.color};--accent-local-soft:${hexToRgba(meta.color,.18)}">
+      <div class="setup-hero-game">
+        <button class="round-back" id="backHome">← Villages</button>
+        <div class="setup-hero-copy">
+          <div class="game-kicker">${meta.icon} Mission sélectionnée</div>
+          <h1>${village.name}</h1>
+          <p>${village.hero}</p>
+          <div class="mission-preview" id="setupSummary">${renderSetupSummaryChips(summary)}</div>
         </div>
-        <button class="secondary subtle" id="backHome">Retour aux villages</button>
+        <div class="mission-token"><span>${meta.icon}</span><strong>${village.route.title}</strong><small>${village.tagline}</small></div>
       </div>
-      <div class="hero-mini" style="border-color:${hexToRgba(meta.color,.28)}; box-shadow:0 24px 40px ${hexToRgba(meta.color,.12)}">
-        <div class="hero-mini-grid">
-          <div>
-            <div class="eyebrow">${meta.icon} ${village.tagline}</div>
-            <h3>${village.name}</h3>
-            <p>${meta.description}</p>
-          </div>
-          <div class="stats-row mission-stats-row" id="setupSummary">
-            ${renderSetupSummaryChips(summary)}
-          </div>
-        </div>
-      </div>
-      <div class="village-switcher-block">
-        <div class="selector-title">Changer de village</div>
-        ${villageSelector(state.villageKey, true)}
-      </div>
-    </section>
 
-    <section class="section fade-in">
-      <div class="section-head compact-head">
-        <div><div class="eyebrow">Réglages utiles</div><h2>Immersion terrain</h2></div>
-        <p>Les réglages changent maintenant vraiment le temps, la distance, le dénivelé, le nombre d’étapes et les validations.</p>
-      </div>
-      <div class="setup-grid improved-setup-grid">
-        <article class="panel">
-          <h3>1. Composition</h3>
-          <div class="field"><label>Mode de jeu</label><div class="choice-row" id="modeChoices"></div></div>
-          <div class="field"><label>Public / âge</label><div class="choice-row" id="ageChoices"></div><div class="helper-text">${AGE_PROFILES[state.config.ageGroup].prompt}</div></div>
-          <div class="field"><label>Nom équipe / session</label><input id="teamNameInput" class="text-input" value="${escapeHtml(state.config.teamName)}"></div>
-          <div class="field"><label>Participants</label><input id="playerNamesInput" class="text-input" value="${escapeHtml(state.config.playerNames)}" placeholder="Ex : Fafa, Léo, Sarah"></div>
-          <div class="field hidden" id="teamNamesWrap"><label>Noms des équipes (séparés par virgules)</label><textarea id="teamNamesInput" class="textarea" rows="3">${escapeHtml(state.config.teamNames)}</textarea></div>
+      <div class="mission-wizard">
+        <article class="wizard-card main-choice">
+          <div class="wizard-number">1</div>
+          <h3>Qui joue ?</h3>
+          <p class="wizard-help">Le public change vraiment la distance, la difficulté des énigmes et le rythme.</p>
+          <div class="choice-row big-choices" id="ageChoices"></div>
+          <div class="helper-text">${AGE_PROFILES[state.config.ageGroup].prompt}</div>
         </article>
 
-        <article class="panel">
-          <h3>2. Immersion & difficulté</h3>
-          <div class="field"><label>Niveau initial</label><div class="choice-grid" id="difficultyChoices"></div></div>
-          <div class="field"><label>Pression de temps</label><div class="choice-row" id="timingChoices"></div></div>
-          <div class="field"><label>Style de mission</label>
-            <select id="missionStyleInput" class="select-input">
-              <option value="immersion">Immersion totale</option>
-              <option value="competition">Compétition terrain</option>
-              <option value="family">Version famille / découverte</option>
-            </select>
-          </div>
+        <article class="wizard-card main-choice">
+          <div class="wizard-number">2</div>
+          <h3>Quel style ?</h3>
+          <p class="wizard-help">Choisis l’intensité de l’aventure.</p>
+          <div class="choice-grid fun-difficulty" id="difficultyChoices"></div>
+          <div class="field compact-field"><label>Pression de temps</label><div class="choice-row" id="timingChoices"></div></div>
+        </article>
+
+        <article class="wizard-card launch-card">
+          <div class="wizard-number">3</div>
+          <h3>Prêt à partir</h3>
           <div class="live-stats-box" id="difficultyImpact">${renderDifficultyImpact(summary)}</div>
-          <div class="info-bubble" style="margin-top:12px">Boucle terrain prévue : ${summary.loops} · public ${summary.ageLabel.toLowerCase()}.</div>
-        </article>
-
-        <article class="panel">
-          <h3>3. Options actives</h3>
-          <div class="option-list-clean">
-            <label class="option-toggle"><input type="checkbox" id="audioToggle" ${state.config.audio?'checked':''}> <span>🔊 Audio guide</span></label>
-            <label class="option-toggle"><input type="checkbox" id="mapToggle" ${state.config.liveMap?'checked':''}> <span>🗺️ Mini‑carte live</span></label>
-            <label class="option-toggle"><input type="checkbox" id="adaptiveToggle" ${state.config.adaptive?'checked':''}> <span>🧠 IA difficulté</span></label>
-          </div>
-          <div class="summary-live compact-summary" style="margin-top:16px">
-            <div class="summary-box"><strong>${modeLabel()}</strong><span>Organisation</span></div>
-            <div class="summary-box"><strong>${difficultyCfg().label}</strong><span>Niveau initial</span></div>
-            <div class="summary-box"><strong>${summary.ageLabel}</strong><span>Public</span></div>
-            <div class="summary-box"><strong>${summary.denivele}</strong><span>Dénivelé</span></div>
-          </div>
-          <div class="cta-row" style="margin-top:18px">
-            <button class="primary" id="startMissionBtn">Démarrer la mission</button>
-          </div>
+          <button class="primary play-xl full" id="startMissionBtn">▶ Démarrer la mission</button>
         </article>
       </div>
+
+      <details class="advanced-details setup-advanced">
+        <summary>⚙️ Options semi-pro</summary>
+        <div class="advanced-grid">
+          <article class="panel flat-panel">
+            <h3>Organisation</h3>
+            <div class="field"><label>Mode de jeu</label><div class="choice-row" id="modeChoices"></div></div>
+            <div class="field"><label>Nom équipe / session</label><input id="teamNameInput" class="text-input" value="${escapeHtml(state.config.teamName)}"></div>
+            <div class="field"><label>Participants</label><input id="playerNamesInput" class="text-input" value="${escapeHtml(state.config.playerNames)}" placeholder="Ex : Fafa, Léo, Sarah"></div>
+            <div class="field hidden" id="teamNamesWrap"><label>Noms des équipes</label><textarea id="teamNamesInput" class="textarea" rows="3">${escapeHtml(state.config.teamNames)}</textarea></div>
+          </article>
+          <article class="panel flat-panel">
+            <h3>Options actives</h3>
+            <div class="option-list-clean">
+              <label class="option-toggle"><input type="checkbox" id="audioToggle" ${state.config.audio?'checked':''}> <span>🔊 Audio guide</span></label>
+              <label class="option-toggle"><input type="checkbox" id="mapToggle" ${state.config.liveMap?'checked':''}> <span>🗺️ Mini‑carte live</span></label>
+              <label class="option-toggle"><input type="checkbox" id="adaptiveToggle" ${state.config.adaptive?'checked':''}> <span>🧠 IA difficulté</span></label>
+            </div>
+            <div class="field" style="margin-top:14px"><label>Style de mission</label>
+              <select id="missionStyleInput" class="select-input">
+                <option value="immersion">Immersion totale</option>
+                <option value="competition">Compétition terrain</option>
+                <option value="family">Version famille / découverte</option>
+              </select>
+            </div>
+          </article>
+        </div>
+      </details>
+
+      <section class="section fade-in more-villages-inline">
+        <div class="section-head compact-head"><div><div class="eyebrow">Changer rapidement</div><h2>Autres villages</h2></div></div>
+        ${villageSelector(state.villageKey, true)}
+      </section>
     </section>`;
   updateTopbar(true,'Préparation');
   setupChoiceButtons();
