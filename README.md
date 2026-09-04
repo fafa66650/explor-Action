@@ -1,21 +1,34 @@
-# FAFATRAINING – Banyuls Aventure
+# FAFATRAINING – Banyuls Aventure V2 INTERACTIVE GUIDE
 
 Application PWA statique prête pour GitHub Pages.
 
-## Déploiement GitHub Pages
-1. Créer un dépôt GitHub.
-2. Envoyer **tous** les fichiers de ce dossier à la racine.
-3. GitHub > Settings > Pages > Deploy from a branch > `main` / root.
-4. Ouvrir l'URL HTTPS fournie par GitHub Pages.
+## Nouveautés V2
+- 6 poses de l’avatar FAFATRAINING intégrées et utilisées selon le contexte : accueil, briefing, indice, sécurité, réussite, mission.
+- 2 logos FAFATRAINING intégrés : identité principale + signature premium.
+- « Le savais-tu ? » débloqué après chaque énigme, pour apprendre sans donner la réponse avant l’épreuve.
+- Lecture vocale locale des découvertes via la synthèse vocale du navigateur.
+- Journal des découvertes dans le sac.
+- Briefing visuel propre à chaque mission.
+- Badges de progression et vibrations/haptique lorsque le support le permet.
+- Bouton d’installation PWA quand le navigateur le propose.
+- Codes d’accès corrigés : toutes les missions et chaque mission ont maintenant un scope distinct.
+- Cache hors ligne des avatars, logos et fichiers de l’application.
 
-## Accès joueur / administration
-- Première ouverture : bouton **Espace admin** puis PIN initial `2468`.
-- L'admin peut changer son PIN, générer des codes temporaires et choisir 3 h, 6 h, 12 h, 1 j, 3 j, 7 j, 14 j ou 30 j.
-- Les codes sont **stateless** : ils contiennent une date d'expiration signée et peuvent donc être utilisés sur plusieurs appareils sans base de données.
-- Pour un usage public réel, changez le PIN et la clé `ADMIN_SECRET` au début de `app.js` avant publication. GitHub Pages restant statique, cette protection est un contrôle d'accès pratique, pas une sécurité serveur inviolable.
+## Installation sur GitHub Pages
+1. Décompresser l’archive.
+2. Envoyer **tout le contenu** à la racine du dépôt GitHub.
+3. GitHub > Settings > Pages > Deploy from a branch > `main` / `(root)`.
+4. Ouvrir l’URL HTTPS fournie par GitHub Pages.
+
+## Administration
+PIN initial : `2468`.
+Change-le depuis l’espace administrateur avant utilisation publique.
+Les codes peuvent être créés pour 3 h, 6 h, 12 h, 1 j, 3 j, 7 j, 14 j ou 30 j.
 
 ## Hors ligne
-L'interface, les missions et la progression sont mises en cache par le Service Worker après la première visite. Le GPS fonctionne si le navigateur l'autorise. La carte de secours intégrée est une carte schématique locale et ne dépend pas de tuiles Internet.
+Après un premier chargement en ligne, le Service Worker met en cache l’application, les avatars et les logos.
+La carte intégrée est schématique et ne dépend pas de Leaflet/OpenStreetMap.
+Le GPS reste une fonction du téléphone et ne nécessite pas à lui seul de connexion internet.
 
 ## Important terrain
-Les coordonnées fournies sont des points de navigation de travail. Plusieurs lieux/adresses ont été vérifiés auprès de sources officielles, mais avant une animation publique il faut effectuer une reconnaissance terrain des 40 étapes, contrôler l'accessibilité, les travaux, horaires, propriétés privées et la précision GPS réelle de chaque zone.
+Les coordonnées/points d’intérêt doivent faire l’objet d’une reconnaissance terrain avant exploitation avec un groupe. Horaires, accès, travaux, propriétés privées et précision GPS peuvent évoluer.
