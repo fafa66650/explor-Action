@@ -2,44 +2,20 @@
   "name": "Explor’Action – FAFATRAINING",
   "short_name": "Explor’Action",
   "id": "./",
-  "description": "Aventures patrimoniales GPS, énigmes et découverte de Banyuls-sur-Mer.",
-  "start_url": "./?v=4.0.0",
+  "description": "Randonnée, aventure GPS, patrimoine et énigmes dans 11 territoires des Pyrénées-Orientales.",
+  "start_url": "./?v=5.0.0",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#07130d",
   "theme_color": "#07130d",
-  "categories": [
-    "education",
-    "travel",
-    "games"
-  ],
+  "categories": ["education", "travel", "games", "sports"],
   "lang": "fr",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
   ],
   "shortcuts": [
-    {
-      "name": "Explor’Action",
-      "short_name": "Jouer",
-      "url": "./?v=4.0.0",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
+    {"name":"Explor’Action","short_name":"Jouer","url":"./?v=5.0.0","icons":[{"src":"icon-192.png","sizes":"192x192"}]}
   ]
 }
