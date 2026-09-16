@@ -1,8 +1,10 @@
-const VERSION = '5.4.4';
-const BUILD = '2026-09-16';
+const VERSION = '5.4.5';
+const BUILD = '2026-09-16-access-home';
 const STORAGE_KEY = 'explorActionV54';
 const PUBLIC_KEY_JWK = {"key_ops":["verify"],"ext":true,"kty":"EC","x":"qii46hISdPRes3l3xjnIWduApWmuuHPADLBdOLOuTRw","y":"dqbMtZ4IDfebDiz98TrVa0Bmx6ZnAa3k7voi9uZHj3s","crv":"P-256"};
 const ACTIVE_KEY_ID = 'explor-action-v54-20260910-a';
+const ACCESS_PROTOCOL = 'EA1';
+const LEGACY_ACCESS_VERSIONS = new Set(['5.4.0','5.4.1','5.4.2','5.4.3','5.4.4','5.4.5']);
 const FIRE_RISK_URL = 'https://www.risque-prevention-incendie.fr/pyrenees-orientales/';
 const ASSETS = {
   guard:'assets/guide-guard.webp', think:'assets/guide-think.webp', welcome:'assets/guide-welcome.webp',
@@ -123,23 +125,45 @@ function stopLive(){if(geoWatch!==null&&navigator.geolocation){navigator.geoloca
 // Signed access codes (ECDSA P-256). The private key is never present in the GitHub package.
 function b64uToBytes(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return Uint8Array.from(atob(s),c=>c.charCodeAt(0))}
 function bytesToText(b){return new TextDecoder().decode(b)}
-async function verifyCode(code){
+function accessReasonMessage(reason){
+  const map={
+    format:'Ce code n\'a pas le format Explor’Action attendu.',
+    payload:'Le contenu du code est illisible.',
+    protocol:'Ce code utilise un ancien protocole non compatible.',
+    key:'Ce code a été créé avec une autre clé de sécurité.',
+    expired:'Ce code a expiré. Demande un nouvel accès à l’organisateur.',
+    future:'La date de création du code semble incorrecte. Vérifie l’heure de l’appareil.',
+    nonce:'Ce code est incomplet.',
+    scope:'Ce code ne correspond plus à une aventure disponible.',
+    signature:'La signature du code est invalide.',
+    crypto:'La vérification sécurisée est indisponible dans ce navigateur.'
+  };
+  return map[reason]||'Accès invalide. Demande un nouveau QR à l’organisateur.';
+}
+async function verifyCodeDetailed(code){
   try{
+    if(!globalThis.crypto?.subtle)return {ok:false,reason:'crypto'};
     const p=(code||'').trim().split('.');
-    if(p.length!==3||p[0]!=='FAFA5')return null;
+    if(p.length!==3||p[0]!=='FAFA5')return {ok:false,reason:'format'};
     const payloadBytes=b64uToBytes(p[1]);
-    const payload=JSON.parse(bytesToText(payloadBytes));
+    let payload;try{payload=JSON.parse(bytesToText(payloadBytes))}catch{return {ok:false,reason:'payload'}}
     const expiresAt=Number(payload.expiresAt||0),issuedAt=Number(payload.issuedAt||0);
-    if(!['5.4.0','5.4.1','5.4.2','5.4.3','5.4.4'].includes(payload.version)||payload.keyId!==ACTIVE_KEY_ID||!expiresAt||Date.now()>expiresAt||issuedAt>Date.now()+300000)return null;
-    if(!payload.nonce||String(payload.nonce).length<12)return null;
+    const protocolOk=payload.protocol===ACCESS_PROTOCOL || (!payload.protocol&&LEGACY_ACCESS_VERSIONS.has(String(payload.version||'')));
+    if(!protocolOk)return {ok:false,reason:'protocol'};
+    if(payload.keyId!==ACTIVE_KEY_ID)return {ok:false,reason:'key'};
+    if(!expiresAt||Date.now()>expiresAt)return {ok:false,reason:'expired'};
+    if(!issuedAt||issuedAt>Date.now()+300000)return {ok:false,reason:'future'};
+    if(!payload.nonce||String(payload.nonce).length<12)return {ok:false,reason:'nonce'};
     const role=payload.role==='admin'?'admin':'player';
-    if(role==='admin'&&payload.scope!=='admin')return null;
-    if(role==='player'&&payload.scope!=='all'&&!MISSIONS.some(m=>m.id===payload.scope&&missionPublished(m))&&!(String(payload.scope||'').startsWith('territory:')&&TERRITORIES.some(t=>t.id===String(payload.scope).slice(10)&&t.status==='ready')))return null;
+    if(role==='admin'&&payload.scope!=='admin')return {ok:false,reason:'scope'};
+    if(role==='player'&&payload.scope!=='all'&&!MISSIONS.some(m=>m.id===payload.scope&&missionPublished(m))&&!(String(payload.scope||'').startsWith('territory:')&&TERRITORIES.some(t=>t.id===String(payload.scope).slice(10)&&t.status==='ready')))return {ok:false,reason:'scope'};
     const key=await crypto.subtle.importKey('jwk',PUBLIC_KEY_JWK,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
     const ok=await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},key,b64uToBytes(p[2]),payloadBytes);
-    return ok?{exp:expiresAt,scope:payload.scope||(role==='admin'?'admin':'all'),role,keyId:payload.keyId}:null;
-  }catch{return null}
+    if(!ok)return {ok:false,reason:'signature'};
+    return {ok:true,value:{exp:expiresAt,scope:payload.scope||(role==='admin'?'admin':'all'),role,keyId:payload.keyId,protocol:payload.protocol||'legacy',generatorVersion:payload.generatorVersion||payload.version||'legacy'}};
+  }catch{return {ok:false,reason:'payload'}}
 }
+async function verifyCode(code){const r=await verifyCodeDetailed(code);return r.ok?r.value:null}
 function playerAccessValid(){return !!(state.access&&state.access.role!=='admin'&&Date.now()<state.access.exp)}
 function adminAccessValid(){return !!(state.adminAccess&&state.adminAccess.role==='admin'&&Date.now()<state.adminAccess.exp)}
 function accessValid(){return state.organizerTest||playerAccessValid()}
@@ -170,8 +194,8 @@ function accessTargetFromText(value){
   }catch{return {}}
 }
 async function activatePlayerAccess(code,target={}){
-  const v=await verifyCode(code);
-  if(!v||v.role==='admin')return {ok:false,message:v?.role==='admin'?'Ce code est réservé à l’espace organisateur.':'Accès invalide ou expiré.'};
+  const check=await verifyCodeDetailed(code),v=check.ok?check.value:null;
+  if(!v||v.role==='admin')return {ok:false,message:v?.role==='admin'?'Ce code est réservé à l’espace organisateur.':accessReasonMessage(check.reason)};
   state.access=v;save();window.ExplorDeepLink?.clean?.();haptic([30,50,30]);
   if(target.mission){const m=MISSIONS.find(x=>x.id===target.mission);if(m&&allowed(m)){renderAdventureDetail(m.id);return {ok:true}}}
   if(target.territory){const t=TERRITORIES.find(x=>x.id===target.territory);if(t&&t.status==='ready'){renderTerritoryHub(t.id);return {ok:true}}}
@@ -194,7 +218,7 @@ async function openQrScanner(){
 function renderAccess(){
   stopLive();clearInterval(timer);applyAccessibility();
   const dl=window.ExplorDeepLink?.read?.()||{};
-  app.innerHTML=`<main class="shell access-player exploration-access"><header class="simple-brand">${logoHTML(false,'access-logo')}</header><section class="card hero exploration-gate ux-access-gate"><div><div class="eyebrow">ACCÈS À L’AVENTURE</div><h1 class="title">Prêt à explorer ?</h1><p class="access-promise">Le plus simple : scanne le QR reçu de l’organisateur. Aucun compte à créer, aucun mot de passe à retenir.</p><div id="deepStatus" class="deep-status ${dl.access?'':'hidden'}" role="status">Lien Explor’Action détecté • vérification sécurisée…</div><div class="access-actions"><button class="btn big-cta qr-primary" id="scanQr">Scanner mon QR d’accès</button><details class="access-method"><summary>🔗 Ouvrir un lien reçu</summary><label for="accessLink">Colle le lien Explor’Action</label><input id="accessLink" class="input" inputmode="url" autocomplete="off" placeholder="https://…"><button class="btn secondary full-btn" id="openLink">Ouvrir l’aventure</button></details><details class="access-method access-backup"><summary>⌨️ Utiliser un code de secours</summary><p class="small">Seulement si le QR ou le lien ne fonctionne pas.</p><label for="accessCode">Code de secours</label><textarea id="accessCode" class="input code-input" rows="3" autocomplete="one-time-code" autocapitalize="off" spellcheck="false" placeholder="FAFA5.…">${escapeHtml(dl.access||'')}</textarea><button class="btn secondary full-btn" id="enter">Valider le code</button></details></div><div class="access-trust"><span>✓ Accès vérifié localement</span><span>✓ Aucun compte joueur</span><span>✓ Progression sur cet appareil</span></div><button class="text-link admin-entry" id="admin">Accès organisateur</button></div><div class="access-landscape" aria-hidden="true"><span class="landscape-compass">⌖</span><span class="landscape-route route-a"></span><span class="landscape-route route-b"></span><span class="landscape-pin pin-a">●</span><span class="landscape-pin pin-b">●</span><strong>EXPLORE<br>LE TERRAIN</strong><small>territoire • patrimoine • orientation</small></div></section></main>`;
+  app.innerHTML=`<main class="shell access-player exploration-access"><header class="simple-brand">${logoHTML(false,'access-logo')}</header><section class="card hero exploration-gate ux-access-gate"><div><div class="eyebrow">ACCÈS À L’AVENTURE</div><h1 class="title">Prêt à explorer ?</h1><p class="access-promise">Scanne le QR reçu de l’organisateur : l’accès s’ouvre automatiquement. Aucun compte, aucun mot de passe.</p><div id="deepStatus" class="deep-status ${dl.access?'':'hidden'}" role="status">Lien Explor’Action détecté • vérification sécurisée…</div><div class="access-actions"><button class="btn big-cta qr-primary" id="scanQr">Scanner le QR d’accès</button><details class="access-method"><summary>🔗 Ouvrir un lien reçu</summary><label for="accessLink">Colle le lien Explor’Action</label><input id="accessLink" class="input" inputmode="url" autocomplete="off" placeholder="https://…"><button class="btn secondary full-btn" id="openLink">Ouvrir l’aventure</button></details><details class="access-method access-backup"><summary>⌨️ Utiliser un code de secours</summary><p class="small">Seulement si le QR ou le lien ne fonctionne pas.</p><label for="accessCode">Code de secours</label><textarea id="accessCode" class="input code-input" rows="3" autocomplete="one-time-code" autocapitalize="off" spellcheck="false" placeholder="FAFA5.…">${escapeHtml(dl.access||'')}</textarea><button class="btn secondary full-btn" id="enter">Valider le code</button></details></div><div class="access-trust"><span>✓ Accès vérifié localement</span><span>✓ Aucun compte joueur</span><span>✓ Progression sur cet appareil</span></div><button class="text-link admin-entry" id="admin">Accès organisateur</button></div><div class="access-landscape" aria-hidden="true"><span class="landscape-compass">⌖</span><span class="landscape-route route-a"></span><span class="landscape-route route-b"></span><span class="landscape-pin pin-a">●</span><span class="landscape-pin pin-b">●</span><strong>EXPLORE<br>LE TERRAIN</strong><small>territoire • patrimoine • orientation</small></div></section></main>`;
   const run=async(target,button)=>{if(!target.access)return toast('Lien ou code non reconnu');if(button){button.disabled=true;button.textContent='Vérification…'}const r=await activatePlayerAccess(target.access,target);if(button){button.disabled=false;button.textContent=button.id==='enter'?'Valider le code':'Ouvrir l’aventure'}if(!r.ok){if($('#deepStatus'))$('#deepStatus').textContent=r.message;toast(r.message)}};
   $('#scanQr').onclick=openQrScanner;$('#openLink').onclick=()=>run(accessTargetFromText($('#accessLink').value),$('#openLink'));$('#enter').onclick=()=>run(accessTargetFromText($('#accessCode').value),$('#enter'));$('#admin').onclick=renderAdminLogin;if(dl.access)setTimeout(()=>run(dl,null),80);
 }
@@ -202,7 +226,7 @@ function renderAdminLogin(){
   stopLive();clearInterval(timer);applyAccessibility();
   app.innerHTML=`<main class="shell access-player"><header class="simple-brand">${logoHTML(false,'access-logo')}<span>FAFATRAINING</span></header><section class="card hero access-immersive admin-access-card"><div><div class="eyebrow">ESPACE ORGANISATEUR</div><h1 class="title">Accès sécurisé</h1><p class="subtitle">Entre un code organisateur signé avec le générateur privé hors ligne. Aucun mot de passe administrateur n’est stocké dans l’application publique.</p><label for="adminCode">Code organisateur</label><textarea id="adminCode" class="input code-input" rows="4" autocomplete="one-time-code" placeholder="FAFA5.…"></textarea><button class="btn big-cta" id="openAdmin">Ouvrir l’administration</button><button class="text-link" id="backPlayer">← Retour à l’accès joueur</button></div><img class="access-avatar" src="${ASSETS.guard}" alt="FAFA, guide organisateur Explor’Action"></section></main>`;
   $('#backPlayer').onclick=()=>accessValid()?renderHome():renderAccess();
-  $('#openAdmin').onclick=async()=>{const b=$('#openAdmin'),code=$('#adminCode').value.trim();if(!code)return toast('Entre un code organisateur');b.disabled=true;b.textContent='Vérification…';const v=await verifyCode(code);b.disabled=false;b.textContent='Ouvrir l’administration';if(!v||v.role!=='admin')return toast('Code organisateur invalide ou expiré');state.adminAccess=v;save();haptic([30,50,30]);renderAdmin()};
+  $('#openAdmin').onclick=async()=>{const b=$('#openAdmin'),code=$('#adminCode').value.trim();if(!code)return toast('Entre un code organisateur');b.disabled=true;b.textContent='Vérification…';const check=await verifyCodeDetailed(code),v=check.ok?check.value:null;b.disabled=false;b.textContent='Ouvrir l’administration';if(!v||v.role!=='admin')return toast(v?.role!=='admin'&&v?'Ce code est réservé au joueur.':accessReasonMessage(check.reason));state.adminAccess=v;save();haptic([30,50,30]);renderAdmin()};
 }
 function renderAdmin(){
   stopLive();clearInterval(timer);applyAccessibility();
@@ -225,7 +249,7 @@ function renderHome(){
   stopLive();clearInterval(timer);applyAccessibility();if(!accessValid())return renderAccess();
   const published=MISSIONS.filter(m=>missionPublished(m)&&allowed(m)),bp={done:published.filter(m=>prog(m).finalDone).length,total:published.length};
   const resume=(state.lastMission&&published.find(m=>m.id===state.lastMission&&prog(m).started&&!prog(m).finalDone))||published.find(m=>prog(m).started&&!prog(m).finalDone);
-  app.innerHTML=`<main class="shell home-clean">${state.organizerTest?'<div class="test-banner">🧪 MODE TEST ORGANISATEUR — scores non officiels</div>':''}${utilityTop()}<section class="card hero clean-home-hero exploration-home ux-home"><div class="home-copy"><div class="eyebrow">FAFATRAINING EXPLORATION</div><h1>Explor’Action</h1><p class="home-mantra">Explore. Observe. Résous. Découvre.</p><p class="subtitle">Choisis un territoire, puis une aventure adaptée à ton envie et au terrain.</p>${resume?`<div class="resume-home-card"><small>AVENTURE EN COURS</small><b>${escapeHtml(resume.title)}</b><span>${pct(resume,prog(resume))}% accompli</span><button class="btn big-cta" id="resumeHome">▶ Reprendre</button></div>`:''}<button class="btn ${resume?'secondary':'big-cta'} home-territory-cta" id="startHome">🧭 Choisir un territoire</button><div class="home-secondary"><button class="text-link" id="scores">Mon carnet d’exploration</button>${bp.done?`<span class="home-progress">${bp.done}/${bp.total} aventures accomplies</span>`:''}</div></div><div class="home-landscape" aria-hidden="true"><span>⌖</span><b>PYRÉNÉES<br>MÉDITERRANÉE</b><i></i></div></section></main>`;
+  app.innerHTML=`<main class="shell home-clean">${state.organizerTest?'<div class="test-banner">🧪 MODE TEST ORGANISATEUR — scores non officiels</div>':''}${utilityTop()}<section class="card hero clean-home-hero exploration-home ux-home"><div class="home-copy"><div class="eyebrow">FAFATRAINING EXPLORATION</div><h1>Explor’Action</h1><p class="home-mantra">Explore. Observe. Résous. Découvre.</p><p class="subtitle">Choisis un territoire. Explor’Action te propose ensuite les aventures disponibles, leur durée et leur niveau de terrain.</p>${resume?`<div class="resume-home-card"><small>AVENTURE EN COURS</small><b>${escapeHtml(resume.title)}</b><span>${pct(resume,prog(resume))}% accompli</span><button class="btn big-cta" id="resumeHome">▶ Reprendre</button></div>`:''}<button class="btn ${resume?'secondary':'big-cta'} home-territory-cta" id="startHome">🧭 Choisir un territoire</button><div class="home-secondary"><button class="text-link" id="scores">Mon carnet d’exploration</button>${bp.done?`<span class="home-progress">${bp.done}/${bp.total} aventures accomplies</span>`:''}</div></div><div class="home-landscape" aria-hidden="true"><span>⌖</span><b>PYRÉNÉES<br>MÉDITERRANÉE</b><i></i></div></section></main>`;
   $('#startHome').onclick=renderTerritories;$('#scores').onclick=renderScores;if($('#resumeHome'))$('#resumeHome').onclick=()=>renderPreflight(resume.id);bindUtility();
 }
 function renderScores(){

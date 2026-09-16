@@ -1,14 +1,19 @@
-# Explor’Action V5.4.4 UX POLISH
+# Explor’Action V5.4.5 — ACCESS & HOME
 
-Déployer le contenu de ce dossier à la racine de GitHub Pages.
+Déployer **uniquement le contenu de ce dossier public** à la racine de GitHub Pages.
 
-## Cette version
-- conserve les aventures et étapes de la base précédente ;
-- simplifie activation, accueil, territoires, fiches aventures et pré-départ ;
-- donne la priorité au territoire et à l’exploration ;
-- optimise la navigation en mission sur smartphone ;
-- conserve QR/lien comme accès normal et code long comme secours ;
-- nettoie les anciens caches automatiquement via le Service Worker.
+## Correctif prioritaire des accès
+- protocole d’accès `EA1` séparé de la version visuelle de l’application ;
+- compatibilité maintenue avec les applications V5.4.x utilisant la même paire de clés ;
+- messages d’erreur d’activation plus précis ;
+- QR / lien toujours prioritaires, code long uniquement en secours ;
+- aucun secret ni clé privée dans ce paquet public.
+
+## UX traitée dans cette étape
+- écran d’activation simplifié ;
+- accueil clarifié ;
+- identité FAFATRAINING Exploration conservée (territoire, patrimoine, orientation, découverte) ;
+- aucune modification des 29 aventures / 197 étapes / Cartes Découverte.
 
 ## Important
-Le paquet public ne contient aucune clé privée. La reconnaissance physique terrain reste distincte de la validation logicielle.
+L’application publique doit être utilisée depuis une origine HTTPS telle que GitHub Pages pour bénéficier de toutes les API de sécurité/PWA. La reconnaissance physique terrain reste distincte de la validation logicielle.
