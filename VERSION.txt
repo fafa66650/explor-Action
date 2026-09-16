@@ -1,4 +1,4 @@
-EXPLOR’ACTION V5.4.2 UX EXPLORATION
-Build 2026-09-15
-Base : V5.4.1 QUALITY PRO
-Orientation : FAFATRAINING Exploration — territoire, patrimoine, orientation, découverte.
+EXPLOR’ACTION V5.4.3 UX POLISH
+Build 2026-09-16
+Base officielle : données métier conservées sans modification
+Orientation : utilisation, lisibilité, placement et identité FAFATRAINING Exploration.

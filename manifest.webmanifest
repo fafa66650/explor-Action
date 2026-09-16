@@ -1,7 +1,7 @@
 {
   "name": "Explor’Action – FAFATRAINING Exploration",
   "short_name": "Explor’Action",
-  "id": "./?v=5.4.2",
+  "id": "./?v=5.4.3",
   "description": "Exploration territoriale, patrimoine, orientation, GPS et énigmes — expérience terrain utilisable hors connexion.",
   "start_url": "./",
   "scope": "./",
@@ -33,7 +33,7 @@
     {
       "name": "Explor’Action",
       "short_name": "Jouer",
-      "url": "./?v=5.4.2",
+      "url": "./?v=5.4.3",
       "icons": [
         {
           "src": "icon-192.png",
