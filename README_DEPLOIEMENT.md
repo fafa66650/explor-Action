@@ -1,4 +1,4 @@
-# Explor’Action V5.4.3 UX POLISH
+# Explor’Action V5.4.4 UX POLISH
 
 Déployer le contenu de ce dossier à la racine de GitHub Pages.
 

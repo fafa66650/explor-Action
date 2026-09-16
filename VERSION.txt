@@ -1,4 +1,4 @@
-EXPLOR’ACTION V5.4.3 UX POLISH
+EXPLOR’ACTION V5.4.4 DISCOVERY
 Build 2026-09-16
-Base officielle : données métier conservées sans modification
-Orientation : utilisation, lisibilité, placement et identité FAFATRAINING Exploration.
+Base : V5.4.3 UX POLISH figée et conservée.
+Évolution : Cartes Découverte / médiation ludique, sans modification des 29 aventures ni des 197 étapes.

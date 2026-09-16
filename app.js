@@ -1,4 +1,4 @@
-const VERSION = '5.4.3';
+const VERSION = '5.4.4';
 const BUILD = '2026-09-16';
 const STORAGE_KEY = 'explorActionV54';
 const PUBLIC_KEY_JWK = {"key_ops":["verify"],"ext":true,"kty":"EC","x":"qii46hISdPRes3l3xjnIWduApWmuuHPADLBdOLOuTRw","y":"dqbMtZ4IDfebDiz98TrVa0Bmx6ZnAa3k7voi9uZHj3s","crv":"P-256"};
@@ -90,7 +90,32 @@ function dist(a,b,c,d){const R=6371,x=(c-a)*Math.PI/180,y=(d-b)*Math.PI/180,z=Ma
 function bearing(a,b,c,d){const p1=a*Math.PI/180,p2=c*Math.PI/180,dl=(d-b)*Math.PI/180;let y=Math.sin(dl)*Math.cos(p2),x=Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl);return (Math.atan2(y,x)*180/Math.PI+360)%360}
 function cardinal(deg){return ['N','NE','E','SE','S','SO','O','NO'][Math.round(deg/45)%8]}
 function scoreRules(){return {success:100,hint:20,hint2:35,error:10,skip:65,final:250}}
-function factText(s){return state.settings.public==='enfant'?`À retenir : ${s.fact}`:s.fact}
+function factText(s){return s.fact||''}
+function discoveryCategory(s){
+  const t=`${s?.name||''} ${s?.fact||''}`.toLowerCase();
+  if(/retirada|mémorial|memoire|mémoire|guerre|exil|frontière/.test(t))return {key:'memoire',icon:'🕯️',label:'Mémoire'};
+  if(/église|abbaye|abbatiale|cloître|roman|chapelle|château|fort|tour|dolmen|monument|obélisque|phare|patrimoine|architecture|linteau|maçonnerie/.test(t))return {key:'patrimoine',icon:'🏛️',label:'Patrimoine'};
+  if(/maillol|fauve|derain|matisse|\bart\b|artiste|peinture|sculpture|galerie|musée/.test(t))return {key:'art',icon:'🎨',label:'Art & culture'};
+  if(/vigne|mer|littoral|réserve|nature|massif|albères|faune|flore|plage|rivage|cap|panorama/.test(t))return {key:'nature',icon:'🌿',label:'Nature & paysage'};
+  if(/siècle|année|construit|fondation|consacré|histor|ancien|époque/.test(t))return {key:'histoire',icon:'⌛',label:'Histoire'};
+  return {key:'territoire',icon:'🧭',label:'Territoire'};
+}
+function discoveryAudienceLabel(cat){
+  if(state.settings.public==='enfant')return 'À RETENIR';
+  if(state.settings.public==='ado')return 'INFO EXPRESS';
+  return cat.key==='nature'?'REPÈRE NATURE':'REPÈRE CULTUREL';
+}
+function discoveryTimeMarker(s){
+  const f=s?.fact||'';
+  const century=f.match(/\b(?:XI{0,3}|IV|V?I{0,3}|IX|X|XXI?)e siècle\b/i);
+  if(century)return century[0];
+  const year=f.match(/\b(?:8\d{2}|9\d{2}|1\d{3}|20\d{2})\b/);
+  return year?year[0]:'';
+}
+function discoveryCardBody(s,i,compact=false){
+  const cat=discoveryCategory(s),marker=discoveryTimeMarker(s),label=discoveryAudienceLabel(cat);
+  return `<article class="discovery-learning-card discovery-${cat.key} ${compact?'compact':''}"><div class="discovery-card-head"><span class="discovery-kind">${cat.icon} ${cat.label}</span><span class="discovery-number">CARTE ${i+1}</span></div><h4>${escapeHtml(s.name)}</h4><div class="discovery-fact"><small>${label}</small><p>${escapeHtml(factText(s))}</p></div>${marker?`<div class="discovery-marker"><span>📌 Repère</span><b>${escapeHtml(marker)}</b></div>`:''}</article>`;
+}
 function routeLevelClass(level){return `route-${level||'unknown'}`}
 function applyAccessibility(){const a=state.settings.a11y;document.body.classList.toggle('a11y-large',!!a.largeText);document.body.classList.toggle('a11y-contrast',!!a.highContrast);document.body.classList.toggle('a11y-reduce',!!a.reduceMotion)}
 function stopLive(){if(geoWatch!==null&&navigator.geolocation){navigator.geolocation.clearWatch(geoWatch);geoWatch=null}window.removeEventListener('deviceorientationabsolute',onOrientation);window.removeEventListener('deviceorientation',onOrientation);heading=null;currentBearing=null;photoObjectUrls.forEach(u=>URL.revokeObjectURL(u));photoObjectUrls=[]}
@@ -105,7 +130,7 @@ async function verifyCode(code){
     const payloadBytes=b64uToBytes(p[1]);
     const payload=JSON.parse(bytesToText(payloadBytes));
     const expiresAt=Number(payload.expiresAt||0),issuedAt=Number(payload.issuedAt||0);
-    if(!['5.4.0','5.4.1','5.4.2','5.4.3'].includes(payload.version)||payload.keyId!==ACTIVE_KEY_ID||!expiresAt||Date.now()>expiresAt||issuedAt>Date.now()+300000)return null;
+    if(!['5.4.0','5.4.1','5.4.2','5.4.3','5.4.4'].includes(payload.version)||payload.keyId!==ACTIVE_KEY_ID||!expiresAt||Date.now()>expiresAt||issuedAt>Date.now()+300000)return null;
     if(!payload.nonce||String(payload.nonce).length<12)return null;
     const role=payload.role==='admin'?'admin':'player';
     if(role==='admin'&&payload.scope!=='admin')return null;
@@ -407,7 +432,7 @@ bindChallenge = function(raw,p,rules){
 };
 discoveryHTML = function(s,i,newCard=null){
   const beat=currentMission?.storyBeats?.[i],title=typeof beat==='object'?beat.title:`Chapitre ${i+1}`,text=typeof beat==='object'?beat.text:beat;
-  return `<div class="discovery">${text?`<div class="story-beat"><small>CHAPITRE ${i+1}</small><h4>${escapeHtml(title||`Chapitre ${i+1}`)}</h4><p>${escapeHtml(text)}</p></div>`:''}${newCard?`<div class="new-clue"><small>NOUVELLE CARTE-INDICE</small><h4>${escapeHtml(newCard.title)}</h4><p>${escapeHtml(newCard.text)}</p></div>`:''}<div class="revealed-place"><small>LIEU DÉCOUVERT</small><h3>${escapeHtml(s.name)}</h3></div><div class="discovery-title"><span>💡 Le savais-tu ?</span><button class="speak-btn" id="speakFact" aria-label="Écouter la découverte">🔊</button></div><div class="discovery-body"><img src="${ASSETS.welcome}" alt="FAFA explique"><p>${escapeHtml(factText(s))}</p></div>${s.photoBonus?`<div class="photo-bonus"><b>📸 Souvenir facultatif</b><p class="small">La photo reste sur cet appareil.</p><input id="photoInput" type="file" accept="image/*" capture="environment"><div id="photoStatus"></div></div>`:''}<div class="row"><button class="btn" id="continue">Continuer →</button></div><p class="small source-moved">La source de cette découverte est conservée dans le Journal.</p></div>`;
+  return `<div class="discovery">${text?`<div class="story-beat"><small>CHAPITRE ${i+1}</small><h4>${escapeHtml(title||`Chapitre ${i+1}`)}</h4><p>${escapeHtml(text)}</p></div>`:''}${newCard?`<div class="new-clue"><small>NOUVELLE CARTE-INDICE</small><h4>${escapeHtml(newCard.title)}</h4><p>${escapeHtml(newCard.text)}</p></div>`:''}<div class="discovery-unlock"><span aria-hidden="true">✦</span><div><small>DÉCOUVERTE DÉBLOQUÉE</small><b>Une nouvelle carte rejoint ton Carnet</b></div></div>${discoveryCardBody(s,i)}<div class="discovery-actions"><button class="speak-btn discovery-listen" id="speakFact" aria-label="Écouter la découverte">🔊 Écouter</button><span>✓ Sauvegardée dans le Carnet</span></div>${s.photoBonus?`<div class="photo-bonus"><b>📸 Souvenir facultatif</b><p class="small">La photo reste sur cet appareil.</p><input id="photoInput" type="file" accept="image/*" capture="environment"><div id="photoStatus"></div></div>`:''}<div class="row"><button class="btn" id="continue">Continuer l’exploration →</button></div><p class="small source-moved">La source documentaire reste disponible dans ton Carnet d’exploration.</p></div>`;
 };
 renderMapTab = function(v,m,p){
   const vis=visibleIndices(m,p),gpsVis=vis.filter(i=>m.steps[i].locationMode!=='trail'&&Number.isFinite(m.steps[i].lat)&&Number.isFinite(m.steps[i].lng)),hasTrail=vis.some(i=>m.steps[i].locationMode==='trail');
@@ -421,15 +446,15 @@ function unlockedClueCards(m,p){const done=p?.done?.length||0;return (m.clueCard
 function clueCardsHTML(m,p){const unlocked=new Set(unlockedClueCards(m,p));return (m.clueCards||[]).map((c,i)=>unlocked.has(c)?`<article class="clue-card unlocked"><small>CARTE ${i+1}</small><h4>${escapeHtml(c.title||`Indice ${i+1}`)}</h4><p>${escapeHtml(c.text||'')}</p></article>`:`<article class="clue-card locked"><small>CARTE ${i+1}</small><h4>🔒 À débloquer</h4><p>Poursuis l’aventure pour révéler cet indice.</p></article>`).join('')}
 
 renderBag = async function(v,m,p){
-  const journal=p.done.map(i=>{const s=m.steps[i],beat=m.storyBeats?.[i],bt=typeof beat==='object'?beat.title:`Chapitre ${i+1}`,bx=typeof beat==='object'?beat.text:beat;return `<details><summary>${i+1}. ${escapeHtml(s.name)}</summary>${bx?`<div class="journal-chapter"><b>${escapeHtml(bt||'Chapitre')}</b><p>${escapeHtml(bx)}</p></div>`:''}<p>${escapeHtml(factText(s))}</p><div class="row"><button class="speak-btn journal-speak" data-i="${i}">🔊 Écouter</button>${s.source?`<a class="text-link" href="${s.source}" target="_blank" rel="noopener">Source ↗</a>`:''}</div></details>`}).join('');
-  v.innerHTML=`<section class="card"><h2>📖 Journal d’aventure</h2><p class="small">L’histoire se construit ici sans dévoiler la suite. Les cartes-indices servent au grand final.</p><div class="clue-cards-grid">${clueCardsHTML(m,p)}</div></section><section class="card journal-card"><h3>Découvertes & faits réels</h3>${journal||'<p class="small">Résous une étape pour débloquer le premier chapitre.</p>'}</section><section class="card journal-card"><h3>📸 Souvenirs locaux</h3><div class="photo-grid" id="photos"><p class="small">Chargement…</p></div></section>`;
+  const journal=p.done.map(i=>{const s=m.steps[i],beat=m.storyBeats?.[i],bt=typeof beat==='object'?beat.title:`Chapitre ${i+1}`,bx=typeof beat==='object'?beat.text:beat;return `<details class="journal-discovery"><summary><span>${discoveryCategory(s).icon}</span><div><b>${i+1}. ${escapeHtml(s.name)}</b><small>${escapeHtml(discoveryCategory(s).label)}</small></div></summary>${bx?`<div class="journal-chapter"><b>${escapeHtml(bt||'Chapitre')}</b><p>${escapeHtml(bx)}</p></div>`:''}${discoveryCardBody(s,i,true)}<div class="row journal-actions"><button class="speak-btn journal-speak" data-i="${i}">🔊 Écouter</button>${s.source?`<a class="text-link" href="${s.source}" target="_blank" rel="noopener">Source vérifiée ↗</a>`:''}</div></details>`}).join('');
+  v.innerHTML=`<section class="card"><div class="section-head"><div><div class="eyebrow">CARNET D’EXPLORATION</div><h2>📖 Ce que tu as découvert</h2><p class="small">Chaque étape réussie débloque une carte réelle sur le patrimoine, la nature, l’histoire ou le territoire.</p></div><span class="pill">${p.done.length}/${m.steps.length}</span></div><div class="discovery-counter"><b>${p.done.length}</b><span>carte${p.done.length>1?'s':''} Découverte débloquée${p.done.length>1?'s':''}</span></div>${journal||'<p class="small">Résous une étape pour débloquer ta première Carte Découverte.</p>'}</section><section class="card"><h3>🧩 Cartes-indices du grand final</h3><p class="small">Elles servent au mot final et restent séparées des Cartes Découverte.</p><div class="clue-cards-grid">${clueCardsHTML(m,p)}</div></section><section class="card journal-card"><h3>📸 Souvenirs locaux</h3><div class="photo-grid" id="photos"><p class="small">Chargement…</p></div></section>`;
   $$('.journal-speak').forEach(b=>b.onclick=()=>speak(factText(m.steps[+b.dataset.i])));
   try{const photos=await photoList(m.id),box=$('#photos');if(!box)return;if(!photos.length)box.innerHTML='<p class="small">Aucune photo enregistrée.</p>';else box.innerHTML=photos.map(x=>{const u=URL.createObjectURL(x.blob);photoObjectUrls.push(u);return `<figure><img src="${u}" alt="Souvenir étape ${x.step+1}"><figcaption>${escapeHtml(m.steps[x.step]?.name||`Étape ${x.step+1}`)}</figcaption></figure>`}).join('')}catch{const box=$('#photos');if(box)box.innerHTML='<p class="small">Stockage photo indisponible.</p>'}
 };
 
 renderFinal = function(v,m,p){
   const rules=scoreRules(),cards=unlockedClueCards(m,p);
-  v.innerHTML=`<section class="card hero success-screen final-screen"><img class="final-avatar" src="${ASSETS.welcome}" alt="FAFA"><div><div class="trophy">🔐</div><span class="pill">${cards.length}/${m.clueCards?.length||cards.length} cartes-indices</span><h2>Grand final</h2><p class="subtitle">Tu as parcouru tout le terrain. Le téléphone ne te donne pas le mot : relie maintenant ce que tu as découvert.</p><div class="clue-cards-grid final-clues">${clueCardsHTML(m,p)}</div><div class="final-question"><b>${escapeHtml(m.finalPrompt||'Quel est le mot-clé final ?')}</b></div><input class="input" id="finalanswer" placeholder="Ta réponse finale" autocomplete="off"><button class="btn" id="finalbtn">Ouvrir le final (+${rules.final})</button><p class="feedback" id="finalfb" aria-live="polite"></p></div></section>`;
+  v.innerHTML=`<section class="card hero success-screen final-screen"><img class="final-avatar" src="${ASSETS.welcome}" alt="FAFA"><div><div class="trophy">🔐</div><span class="pill">${cards.length}/${m.clueCards?.length||cards.length} cartes-indices</span><h2>Grand final</h2><p class="subtitle">Tu as parcouru tout le terrain. Le téléphone ne te donne pas le mot : relie maintenant ce que tu as découvert.</p><div class="final-learning-note">📚 ${p.done.length} Cartes Découverte sont conservées dans ton Carnet.</div><div class="clue-cards-grid final-clues">${clueCardsHTML(m,p)}</div><div class="final-question"><b>${escapeHtml(m.finalPrompt||'Quel est le mot-clé final ?')}</b></div><input class="input" id="finalanswer" placeholder="Ta réponse finale" autocomplete="off"><button class="btn" id="finalbtn">Ouvrir le final (+${rules.final})</button><p class="feedback" id="finalfb" aria-live="polite"></p></div></section>`;
   $('#finalbtn').onclick=()=>{if(norm($('#finalanswer').value)===norm(m.final)){if(!p.finalDone){p.finalDone=true;p.score+=rules.final;pauseClock(p);save()}chime(true);haptic([100,50,100,50,180]);showPremiumResult(v,m,p)}else{chime(false);$('#finalfb').className='feedback bad';$('#finalfb').textContent='Pas encore. Relis les trois cartes-indices et les découvertes du Journal.'}};
 };
 
@@ -496,7 +521,7 @@ async function measureRecognitionPoint(m,i){
 }
 
 renderGuide = function(){
-  stopLive();app.innerHTML=`<main class="shell"><header class="topbar">${logoHTML()}<button class="btn secondary" id="back">← Retour</button></header><section class="card hero guide-page"><img class="hero-avatar" src="${ASSETS.think}" alt="FAFA"><div><span class="pill">❓ Guide FAFA</span><h1>Comment ça marche ?</h1><div class="guide-steps"><p><b>1.</b> Choisis un territoire puis une aventure selon le niveau physique, la distance, le dénivelé et le terrain.</p><p><b>2.</b> Choisis Enfant, Ado ou Adulte : cela adapte les énigmes, jamais la difficulté de la randonnée.</p><p><b>3.</b> Lis le briefing et vérifie GPS, batterie, météo, risque incendie et accessibilité.</p><p><b>4.</b> En ville, certains lieux se valident au GPS. En randonnée, suis d’abord le balisage et les indications officielles.</p><p><b>5.</b> Observe le lieu réel : choix, calculs, ordre, sélection multiple et énigmes alternent selon l’aventure.</p><p><b>6.</b> Les faits et leurs sources se débloquent dans le Journal, sans casser l’histoire en plein jeu.</p><p><b>7.</b> Chaque territoire réunit plusieurs aventures. Son épilogue se débloque lorsque toutes les aventures publiées du territoire sont accomplies.</p></div><button class="btn" id="listen">🔊 Écouter FAFA</button></div></section></main>`;$('#back').onclick=renderUtilityMenu;$('#listen').onclick=()=>speak('Choisis une aventure adaptée au terrain. Le public adapte les énigmes, pas la randonnée. En ville utilise le GPS, sur les sentiers suis le balisage officiel. Observe le lieu réel, résous les défis et retrouve les faits sourcés dans ton journal.');
+  stopLive();app.innerHTML=`<main class="shell"><header class="topbar">${logoHTML()}<button class="btn secondary" id="back">← Retour</button></header><section class="card hero guide-page"><img class="hero-avatar" src="${ASSETS.think}" alt="FAFA"><div><span class="pill">❓ Guide FAFA</span><h1>Comment ça marche ?</h1><div class="guide-steps"><p><b>1.</b> Choisis un territoire puis une aventure selon le niveau physique, la distance, le dénivelé et le terrain.</p><p><b>2.</b> Choisis Enfant, Ado ou Adulte : cela adapte les énigmes, jamais la difficulté de la randonnée.</p><p><b>3.</b> Lis le briefing et vérifie GPS, batterie, météo, risque incendie et accessibilité.</p><p><b>4.</b> En ville, certains lieux se valident au GPS. En randonnée, suis d’abord le balisage et les indications officielles.</p><p><b>5.</b> Observe le lieu réel : choix, calculs, ordre, sélection multiple et énigmes alternent selon l’aventure.</p><p><b>6.</b> Chaque réussite débloque une <b>Carte Découverte</b> : une information courte et sourcée sur le lieu, sauvegardée automatiquement dans ton Carnet d’exploration.</p><p><b>7.</b> Chaque territoire réunit plusieurs aventures. Son épilogue se débloque lorsque toutes les aventures publiées du territoire sont accomplies.</p></div><button class="btn" id="listen">🔊 Écouter FAFA</button></div></section></main>`;$('#back').onclick=renderUtilityMenu;$('#listen').onclick=()=>speak('Choisis une aventure adaptée au terrain. Le public adapte les énigmes, pas la randonnée. En ville utilise le GPS, sur les sentiers suis le balisage officiel. Observe le lieu réel, résous les défis et collectionne les Cartes Découverte sourcées dans ton Carnet d’exploration.');
 };
 
 
