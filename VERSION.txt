@@ -1,3 +1,4 @@
-5.4.0 QUALITY
-Build 2026-09-10
-5 territoires en base application/test. Validation terrain certifiée distincte et non revendiquée.
+EXPLOR’ACTION V5.4.2 UX EXPLORATION
+Build 2026-09-15
+Base : V5.4.1 QUALITY PRO
+Orientation : FAFATRAINING Exploration — territoire, patrimoine, orientation, découverte.

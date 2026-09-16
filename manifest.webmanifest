@@ -1,19 +1,18 @@
 {
-  "name": "Explor’Action – FAFATRAINING",
+  "name": "Explor’Action – FAFATRAINING Exploration",
   "short_name": "Explor’Action",
-  "id": "./",
-  "description": "Randonnée, aventure GPS, patrimoine et énigmes — 5 territoires en base application/test.",
-  "start_url": "./?v=5.4.0",
+  "id": "./?v=5.4.2",
+  "description": "Exploration territoriale, patrimoine, orientation, GPS et énigmes — expérience terrain utilisable hors connexion.",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#07130d",
   "theme_color": "#07130d",
   "categories": [
-    "education",
     "travel",
-    "games",
-    "sports"
+    "education",
+    "games"
   ],
   "lang": "fr",
   "icons": [
@@ -34,7 +33,7 @@
     {
       "name": "Explor’Action",
       "short_name": "Jouer",
-      "url": "./?v=5.4.0",
+      "url": "./?v=5.4.2",
       "icons": [
         {
           "src": "icon-192.png",
