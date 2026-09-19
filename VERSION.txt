@@ -1,0 +1,3 @@
+EXPLOR’ACTION V5.4.6 POLISH
+Base: V5.4.5 ACCESS & HOME
+Objet: finition UX/UI, cohérence d’accès, responsive, accessibilité et nettoyage CSS — aucune nouvelle fonction
