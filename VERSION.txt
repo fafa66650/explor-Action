@@ -1,3 +1,0 @@
-EXPLOR’ACTION V5.4.5 ACCESS & HOME
-Base: V5.4.4 DISCOVERY
-Objet: correction protocole d’accès + ergonomie activation/accueil
