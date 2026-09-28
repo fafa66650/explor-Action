@@ -1,0 +1,17 @@
+(function(){
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+function finitePoint(p){return Number.isFinite(p?.lat)&&Number.isFinite(p?.lng)}
+function bounds(points){const p=points.filter(finitePoint);if(!p.length)return null;let minLat=Math.min(...p.map(x=>x.lat)),maxLat=Math.max(...p.map(x=>x.lat)),minLng=Math.min(...p.map(x=>x.lng)),maxLng=Math.max(...p.map(x=>x.lng));if(maxLat===minLat){maxLat+=.001;minLat-=.001}if(maxLng===minLng){maxLng+=.001;minLng-=.001}const padLat=(maxLat-minLat)*.16,padLng=(maxLng-minLng)*.16;return {minLat:minLat-padLat,maxLat:maxLat+padLat,minLng:minLng-padLng,maxLng:maxLng+padLng};}
+function project(p,b,w,h){const x=28+(p.lng-b.minLng)/(b.maxLng-b.minLng)*(w-56);const y=28+(b.maxLat-p.lat)/(b.maxLat-b.minLat)*(h-56);return {x,y};}
+function svgEl(name,attrs={}){const e=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);return e;}
+function render(container,options={}){if(!container)return null;container.innerHTML='';const w=900,h=560,points=(options.points||[]).filter(finitePoint),player=finitePoint(options.player)?options.player:null,all=player?[...points,player]:points;if(!all.length){container.innerHTML='<div class="offline-map-empty">Aucun point GPS disponible pour cette portion. Suis les repères terrain.</div>';return null;}const b=bounds(all);const svg=svgEl('svg',{viewBox:`0 0 ${w} ${h}`,role:'img','aria-label':options.label||'Carte hors connexion de l’aventure'});svg.classList.add('offline-svg-map');
+  const bg=svgEl('rect',{x:0,y:0,width:w,height:h,rx:22,class:'omap-bg'});svg.appendChild(bg);
+  for(let i=1;i<8;i++){svg.appendChild(svgEl('line',{x1:i*w/8,y1:0,x2:i*w/8,y2:h,class:'omap-grid'}));}for(let i=1;i<5;i++){svg.appendChild(svgEl('line',{x1:0,y1:i*h/5,x2:w,y2:i*h/5,class:'omap-grid'}));}
+  const route=points.map(p=>project(p,b,w,h));if(route.length>1)svg.appendChild(svgEl('polyline',{points:route.map(p=>`${p.x},${p.y}`).join(' '),class:'omap-route'}));
+  points.forEach((p,idx)=>{const q=project(p,b,w,h),g=svgEl('g',{class:`omap-point ${p.done?'done':''} ${p.current?'current':''}`});g.appendChild(svgEl('circle',{cx:q.x,cy:q.y,r:p.current?17:13}));const t=svgEl('text',{x:q.x,y:q.y+5,'text-anchor':'middle'});t.textContent=String(p.label??idx+1);g.appendChild(t);if(p.title){const title=svgEl('title');title.textContent=p.title;g.appendChild(title)}svg.appendChild(g);});
+  if(player){const q=project(player,b,w,h);if(Number.isFinite(player.accuracy)){const metersPerDegLat=111320;const latSpan=b.maxLat-b.minLat;const r=Math.min(100,Math.max(8,(player.accuracy/metersPerDegLat/latSpan)*(h-56)));svg.appendChild(svgEl('circle',{cx:q.x,cy:q.y,r,class:'omap-accuracy'}));}svg.appendChild(svgEl('circle',{cx:q.x,cy:q.y,r:11,class:'omap-player'}));}
+  const north=svgEl('g',{class:'omap-north'});north.appendChild(svgEl('text',{x:w-38,y:38,'text-anchor':'middle'}));north.lastChild.textContent='N';north.appendChild(svgEl('path',{d:`M ${w-38} 48 l -8 18 h 16 z`}));svg.appendChild(north);
+  container.appendChild(svg);const legend=document.createElement('div');legend.className='offline-map-legend';legend.innerHTML='<span><i class="dot player"></i>Ma position</span><span><i class="dot next"></i>Prochain repère</span><span><i class="dot done"></i>Découvert</span><b>Carte locale • fonctionne hors connexion</b>';container.appendChild(legend);return {bounds:b};}
+window.OfflineMap={render};
+})();
